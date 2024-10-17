@@ -11,7 +11,7 @@ import java.util.List;
 public class InstructorDAO {
     private static final String URL = "jdbc:mysql://localhost:3306/CourseCompass_db?serverTimezone=UTC";  
     private static final String USER = "root"; 
-    private static final String PASSWORD = "Tjj_mysql02!";
+    private static final String PASSWORD = "mysqlpassword";
 
     public void addInstructortoDb(Instructor instructor) {
         String userSql = "INSERT INTO users (username, password, user_type) VALUES (?, ?, 'INSTRUCTOR')";
