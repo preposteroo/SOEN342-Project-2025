@@ -9,19 +9,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class InstructorDAO {
-    private static final String URL = "jdbc:mysql://localhost:3308/CourseCompass_db?serverTimezone=UTC";
+    private static final String URL =
+            "jdbc:mysql://localhost:3308/CourseCompass_db?serverTimezone=UTC";
     private static final String USER = "root";
     private static final String PASSWORD = "toor";
 
     public void addInstructortoDb(Instructor instructor) {
-        String userSql = "INSERT INTO users (username, password, user_type) VALUES (?, ?, 'INSTRUCTOR')";
-<<<<<<< HEAD
-        String instructorSql = "INSERT INTO instructors (user_id, specialization) VALUES (?, ?)"; 
-=======
-        String instructorSql = "INSERT INTO instructors (user_id, specialization) VALUES (?, ?)"; // Keep the
-                                                                                                  // RETURN_GENERATED_KEYS
-                                                                                                  // here
->>>>>>> 778fec9968e9a45887ea71cf38d344fc74748a60
+        String userSql =
+                "INSERT INTO users (username, password, user_type) VALUES (?, ?, 'INSTRUCTOR')";
+        String instructorSql = "INSERT INTO instructors (user_id, specialization) VALUES (?, ?)";
         String citySql = "INSERT INTO city (city_name) VALUES (?)";
         String linkCitySql = "INSERT INTO instructor_cities (instructor_id, city_id) VALUES (?, ?)";
 
@@ -80,10 +76,12 @@ public class InstructorDAO {
         }
     }
 
-    private int insertCityIfNotExists(String cityName, PreparedStatement cityStatement) throws SQLException {
+    private int insertCityIfNotExists(String cityName, PreparedStatement cityStatement)
+            throws SQLException {
         // Check if the city already exists
         String checkCitySql = "SELECT id FROM city WHERE city_name = ?";
-        try (PreparedStatement checkCityStatement = cityStatement.getConnection().prepareStatement(checkCitySql)) {
+        try (PreparedStatement checkCityStatement =
+                cityStatement.getConnection().prepareStatement(checkCitySql)) {
             checkCityStatement.setString(1, cityName);
             ResultSet rs = checkCityStatement.executeQuery();
             if (rs.next()) {
@@ -103,57 +101,52 @@ public class InstructorDAO {
 
         throw new SQLException("Failed to insert city: " + cityName);
     }
-<<<<<<< HEAD
-public Instructor authenticateInstructor(String username, String password) {
-    String sql = "SELECT u.id, u.username, u.password, i.specialization, c.city_name " +
-                 "FROM users u " +
-                 "JOIN instructors i ON u.id = i.user_id " +
-                 "LEFT JOIN instructor_cities ic ON i.id = ic.instructor_id " +
-                 "LEFT JOIN city c ON ic.city_id = c.id " +
-                 "WHERE u.username = ? AND u.password = ? AND u.user_type = 'INSTRUCTOR'";
 
-    try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
-         PreparedStatement statement = connection.prepareStatement(sql)) {
+    public Instructor authenticateInstructor(String username, String password) {
+        String sql = "SELECT u.id, u.username, u.password, i.specialization, c.city_name "
+                + "FROM users u " + "JOIN instructors i ON u.id = i.user_id "
+                + "LEFT JOIN instructor_cities ic ON i.id = ic.instructor_id "
+                + "LEFT JOIN city c ON ic.city_id = c.id "
+                + "WHERE u.username = ? AND u.password = ? AND u.user_type = 'INSTRUCTOR'";
 
-        statement.setString(1, username);
-        statement.setString(2, password);
-        ResultSet resultSet = statement.executeQuery();
+        try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
+                PreparedStatement statement = connection.prepareStatement(sql)) {
 
-        Instructor instructor = null;
+            statement.setString(1, username);
+            statement.setString(2, password);
+            ResultSet resultSet = statement.executeQuery();
+
+            Instructor instructor = null;
 
 
-        while (resultSet.next()) {
-            if (instructor == null) {
-                // Create the instructor object only once
-                instructor = new Instructor();
-                Instructor.setUsername(resultSet.getString("username"));
-                Instructor.setPassword(resultSet.getString("password"));
-                Instructor.setSpecialization(resultSet.getString("specialization"));
+            while (resultSet.next()) {
+                if (instructor == null) {
+                    // Create the instructor object only once
+                    instructor = new Instructor();
+                    instructor.setUsername(resultSet.getString("username"));
+                    instructor.setPassword(resultSet.getString("password"));
+                    instructor.setSpecialization(resultSet.getString("specialization"));
+                }
+                // Collect all city names
+                String cities = "";
+
+                String cityName = resultSet.getString("city_name");
+                if (cityName != null) {
+                    cities += cityName + ",";
+                }
+                String[] instructorCities = cities.split(",");
+                instructor.setCityNames(instructorCities);
             }
-            // Collect all city names
-            String cities="";
-            
-            String cityName = resultSet.getString("city_name");
-            if (cityName != null) {
-                cities+=cityName+",";
-            }
-            String[] instructorCities = cities.split(",");
-            Instructor.setCityNames(instructorCities);
+            System.out
+                    .println("Succesfully authenticated, welcome back " + instructor.getUsername());
+            return instructor; // Return the instructor object (null if authentication fails)
+
+        } catch (SQLException e) {
+            System.out.println("SQL error occurred during authentication: " + e.getMessage());
         }
-        System.out.println("Succesfully authenticated, welcome back "+ Instructor.getUsername());
-        return instructor; // Return the instructor object (null if authentication fails)
 
-    } catch (SQLException e) {
-        System.out.println("SQL error occurred during authentication: " + e.getMessage());
-=======
-
-    public void instructorAuthentication(Instructor instructor) {
-
->>>>>>> 778fec9968e9a45887ea71cf38d344fc74748a60
+        return null; // Return null if authentication fails
     }
 
-    return null; // Return null if authentication fails
-}
 
-    
 }
