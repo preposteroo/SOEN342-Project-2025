@@ -1,6 +1,7 @@
 package com.soen342HB.coursecompass;
 
 public class Instructor {
+<<<<<<< HEAD
 	private static String username;
 	private static String password; //Phone Number
 	private static String specialization;
@@ -14,31 +15,51 @@ public class Instructor {
 		Instructor.password=password;
 		Instructor.specialization=specialization;
 		Instructor.cityNames=cityNames;
+=======
+	private String username;
+	private String password; // Phone Number
+	private String specialization;
+	private String[] cityNames;
+
+	public Instructor(String username, String password, String specialization, String[] cityNames) {
+		this.username = username;
+		this.password = password;
+		this.specialization = specialization;
+		this.cityNames = cityNames;
+>>>>>>> 778fec9968e9a45887ea71cf38d344fc74748a60
 	}
-	public static String getUsername() {
+
+	public String getUsername() {
 		return username;
 	}
-	public static void setUsername(String username) {
-		Instructor.username = username;
+
+	public void setUsername(String username) {
+		this.username = username;
 	}
-	public static String getPassword() {
+
+	public String getPassword() {
 		return password;
 	}
-	public static void setPassword(String password) {
-		Instructor.password = password;
+
+	public void setPassword(String password) {
+		this.password = password;
 	}
-	public static String getSpecialization() {
+
+	public String getSpecialization() {
 		return specialization;
 	}
-	public static void setSpecialization(String specialization) {
-		Instructor.specialization = specialization;
+
+	public void setSpecialization(String specialization) {
+		this.specialization = specialization;
 	}
-	public static String[] getCityNames() {
+
+	public String[] getCityNames() {
 		return cityNames;
 	}
-	public static void setCityNames(String[] cityNames) {
-		Instructor.cityNames = cityNames;
+
+	public void setCityNames(String[] cityNames) {
+		this.cityNames = cityNames;
 	}
-	
-	
+
+
 }
