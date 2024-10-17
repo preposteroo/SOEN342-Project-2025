@@ -6,6 +6,9 @@ public class Instructor {
 	private static String specialization;
 	private static String[] cityNames;
 	
+	public Instructor(){
+		
+	}
 	public Instructor (String username,String password,String specialization,String[] cityNames) {
 		Instructor.username=username;
 		Instructor.password=password;
