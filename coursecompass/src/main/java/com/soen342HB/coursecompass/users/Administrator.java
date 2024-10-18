@@ -1,6 +1,6 @@
 package com.soen342HB.coursecompass.users;
 
-import java.util.ArrayList;
+import java.util.Set;
 
 public class Administrator extends PrivateUser {
     private String username;
@@ -18,8 +18,8 @@ public class Administrator extends PrivateUser {
     }
 
     @Override
-    public ArrayList<String> getCommands() {
-        ArrayList<String> list = super.getCommands();
+    public Set<String> getCommands() {
+        var list = super.getCommands();
         list.add("offerings");
         return list;
     }

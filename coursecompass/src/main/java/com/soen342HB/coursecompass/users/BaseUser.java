@@ -1,6 +1,7 @@
 package com.soen342HB.coursecompass.users;
 
-import java.util.ArrayList;
+import java.util.Set;
+import java.util.HashSet;
 import com.soen342HB.coursecompass.App;
 
 public abstract class BaseUser {
@@ -20,8 +21,8 @@ public abstract class BaseUser {
         }
     }
 
-    public ArrayList<String> getCommands() {
-        ArrayList<String> list = new ArrayList<String>();
+    public Set<String> getCommands() {
+        var list = new HashSet<String>();
         list.add("help");
         list.add("exit");
         return list;

@@ -1,6 +1,6 @@
 package com.soen342HB.coursecompass.users;
 
-import java.util.ArrayList;
+import java.util.Set;
 import com.soen342HB.coursecompass.App;
 
 public abstract class PrivateUser extends BaseUser {
@@ -15,8 +15,8 @@ public abstract class PrivateUser extends BaseUser {
         }
     }
 
-    public ArrayList<String> getCommands() {
-        ArrayList<String> list = super.getCommands();
+    public Set<String> getCommands() {
+        var list = super.getCommands();
         list.add("logout");
         return list;
     }
