@@ -8,7 +8,7 @@ public class OfferingDAO implements IDAO<Offering> {
     public static ArrayList<Offering> db = new ArrayList<Offering>();
 
     @Override
-    public void addToDb(Offering offering) {
+    public void addtoDb(Offering offering) {
         db.add(offering);
     }
 
