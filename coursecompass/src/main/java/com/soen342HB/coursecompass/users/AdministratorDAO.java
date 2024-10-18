@@ -15,7 +15,7 @@ public class AdministratorDAO implements IDAO<Administrator> {
 
     @Override
     public void addtoDb(Administrator administrator) {
-        String sql = "INSERT INTO administrators (username, password) VALUES (?, ?)";
+        String sql = "INSERT INTO users (username, password, user_type) VALUES (?, ?, 'ADMIN')";
         try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, administrator.getUsername());
@@ -29,7 +29,7 @@ public class AdministratorDAO implements IDAO<Administrator> {
 
     @Override
     public void removeFromDb(Administrator administrator) {
-        String sql = "DELETE FROM administrators WHERE username = ?";
+        String sql = "DELETE FROM users WHERE username = ? AND user_type = 'ADMIN'";
         try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, administrator.getUsername());
@@ -46,7 +46,7 @@ public class AdministratorDAO implements IDAO<Administrator> {
 
     @Override
     public Administrator fetchFromDb(String username) {
-        String sql = "SELECT * FROM administrators WHERE username = ?";
+        String sql = "SELECT * FROM users WHERE username = ? AND user_type = 'ADMIN'";
         try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, username);
@@ -65,7 +65,7 @@ public class AdministratorDAO implements IDAO<Administrator> {
 
     @Override
     public void updateDb(Administrator administrator) {
-        String sql = "UPDATE administrators SET password = ? WHERE username = ?";
+        String sql = "UPDATE users SET password = ? WHERE username = ? AND user_type = 'ADMIN'";
         try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, administrator.getPassword());
