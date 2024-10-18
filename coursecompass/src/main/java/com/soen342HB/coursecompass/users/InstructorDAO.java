@@ -22,6 +22,7 @@ public class InstructorDAO implements IDAO<Instructor> {
             statement.setString(1, instructor.getUsername());
             statement.setString(2, instructor.getPassword());
             statement.setString(3, instructor.getSpecialization());
+            // statement.setString(4, String.join(",", instructor.getCities()));
             statement.executeUpdate();
             System.out.println("Instructor added successfully.");
         } catch (SQLException e) {
@@ -56,7 +57,8 @@ public class InstructorDAO implements IDAO<Instructor> {
             if (resultSet.next()) {
                 String password = resultSet.getString("password");
                 String specialization = resultSet.getString("specialization");
-                return new Instructor(username, password, specialization);
+                String cities = resultSet.getString("cities");
+                return new Instructor(username, password, specialization, cities.split(","));
             } else {
                 System.out.println("Instructor not found.");
                 return null;

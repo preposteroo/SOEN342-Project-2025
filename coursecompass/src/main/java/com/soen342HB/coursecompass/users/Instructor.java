@@ -4,11 +4,13 @@ public class Instructor extends PrivateUser {
 	private String username;
 	private String password; // Phone Number
 	private String specialization;
+	private String[] cities;
 
-	public Instructor(String username, String password, String specialization) {
+	public Instructor(String username, String password, String specialization, String[] cities) {
 		this.username = username;
 		this.password = password;
 		this.specialization = specialization;
+		this.cities = cities;
 	}
 
 	@Override
@@ -38,5 +40,13 @@ public class Instructor extends PrivateUser {
 
 	public void setSpecialization(String specialization) {
 		this.specialization = specialization;
+	}
+
+	public String[] getCities() {
+		return cities;
+	}
+
+	public void setCities(String[] cities) {
+		this.cities = cities;
 	}
 }

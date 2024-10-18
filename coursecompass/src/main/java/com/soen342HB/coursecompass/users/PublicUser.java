@@ -96,7 +96,10 @@ public class PublicUser extends BaseUser {
             case "instructor":
                 System.out.print("Specialization: ");
                 String specialization = InputManager.getInput();
-                Instructor instructor = new Instructor(username, password, specialization);
+                System.out.print("Cities (comma-separated): ");
+                String cities = InputManager.getInput();
+                Instructor instructor =
+                        new Instructor(username, password, specialization, cities.split(","));
                 InstructorDAO instructorDAO = new InstructorDAO();
                 instructorDAO.addtoDb(instructor);
                 break;
