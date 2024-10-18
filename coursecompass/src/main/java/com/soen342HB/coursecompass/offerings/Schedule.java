@@ -67,4 +67,10 @@ public class Schedule {
     public void setSpace(Space space) {
         this.space = space;
     }
+
+    public String toString() {
+        return "Schedule{" + "startDate=" + startDate + ", endDate=" + endDate + ", dayOfWeek="
+                + dayOfWeek + ", startTime=" + startTime + ", endTime=" + endTime + ", space="
+                + space + '}';
+    }
 }
