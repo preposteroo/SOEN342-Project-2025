@@ -16,7 +16,7 @@ public class InstructorDAO implements IDAO<Instructor> {
     @Override
     public void addtoDb(Instructor instructor) {
         String sql =
-                "INSERT INTO users (username, password, user_type, specialization) VALUES (?, ?, 'INSTRUCTOR', ?, ?)";
+                "INSERT INTO instructors (username, password, specialization) VALUES (?, ?, ?)";
         try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, instructor.getUsername());
@@ -32,7 +32,7 @@ public class InstructorDAO implements IDAO<Instructor> {
 
     @Override
     public void removeFromDb(Instructor instructor) {
-        String sql = "DELETE FROM users WHERE username = ? AND user_type = 'INSTRUCTOR'";
+        String sql = "DELETE FROM instructors WHERE username = ?";
         try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, instructor.getUsername());
@@ -71,8 +71,7 @@ public class InstructorDAO implements IDAO<Instructor> {
 
     @Override
     public void updateDb(Instructor instructor) {
-        String sql =
-                "UPDATE users SET password = ? WHERE username = ? AND user_type = 'INSTRUCTOR'";
+        String sql = "UPDATE instructors SET password = ? WHERE username = ?";
         try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, instructor.getPassword());

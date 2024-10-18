@@ -10,7 +10,7 @@ public class PublicUser extends BaseUser {
 
     @Override
     public Set<String> getCommands() {
-        var list = super.getCommands();
+        Set<String> list = super.getCommands();
         list.add("login");
         list.add("makeuser");
         return list;

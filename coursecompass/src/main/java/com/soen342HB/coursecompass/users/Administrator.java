@@ -26,12 +26,16 @@ public class Administrator extends PrivateUser {
 
     @Override
     public Set<String> getCommands() {
-        var list = super.getCommands();
+        Set<String> list = super.getCommands();
         list.add("offerings");
         return list;
     }
 
     private void offerings(String[] flags) {
+        if (flags.length < 2) {
+            System.out.println("Invalid use of the command offerings.");
+            return;
+        }
         switch (flags[1]) {
             case "create":
                 System.out.println("Creating an offering...");

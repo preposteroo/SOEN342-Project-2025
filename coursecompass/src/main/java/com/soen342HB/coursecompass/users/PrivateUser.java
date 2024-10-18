@@ -16,7 +16,7 @@ public abstract class PrivateUser extends BaseUser {
     }
 
     public Set<String> getCommands() {
-        var list = super.getCommands();
+        Set<String> list = super.getCommands();
         list.add("logout");
         return list;
     }

@@ -22,7 +22,7 @@ public abstract class BaseUser {
     }
 
     public Set<String> getCommands() {
-        var list = new HashSet<String>();
+        Set<String> list = new HashSet<String>();
         list.add("help");
         list.add("exit");
         return list;
