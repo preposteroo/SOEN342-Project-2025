@@ -55,7 +55,7 @@ public class Administrator extends PrivateUser {
                         startTime, endTime, space);
                 Offering offering = new Offering(courseType, schedule);
                 OfferingDAO offeringDAO = new OfferingDAO();
-                offeringDAO.addToDb(offering);
+                offeringDAO.addtoDb(offering);
                 break;
             default:
                 System.out.println("Invalid use of the command offerings.");
