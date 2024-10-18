@@ -25,4 +25,8 @@ public class Offering {
     public void setSchedule(Schedule schedule) {
         this.schedule = schedule;
     }
+
+    public String toString() {
+        return "Offering{" + "type=" + type + ", schedule=" + schedule + '}';
+    }
 }

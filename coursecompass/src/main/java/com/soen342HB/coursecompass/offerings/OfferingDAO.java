@@ -27,6 +27,14 @@ public class OfferingDAO implements IDAO<Offering> {
         return null;
     }
 
+    public Offering[] fetchAllFromDb() {
+        Offering[] offerings = new Offering[db.size()];
+        for (int i = 0; i < db.size(); i++) {
+            offerings[i] = db.get(i);
+        }
+        return offerings;
+    }
+
     @Override
     public void updateDb(Offering offering) {
         for (Offering o : db) {
