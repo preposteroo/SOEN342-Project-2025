@@ -83,21 +83,5 @@ public class AdministratorDAO implements IDAO<Administrator> {
         }
     }
 
-    @Override
-    public boolean authenticate(String username, String password) {
-        String sql =
-                "SELECT * FROM users WHERE username = ? AND password = ? AND user_type = 'ADMINISTRATOR'";
-        try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
-                PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, username);
-            statement.setString(2, password);
-            ResultSet resultSet = statement.executeQuery();
-            return resultSet.next();
-        } catch (SQLException e) {
-            System.out.println("SQL error occurred: " + e.getMessage());
-            return false;
-        }
-    }
-
 
 }

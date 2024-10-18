@@ -2,19 +2,19 @@ package com.soen342HB.coursecompass.offerings;
 
 public class Offering {
     // Do we need a DateTime object here?
-    private EOfferingType type;
+    private EOfferingMode type;
     private Schedule schedule;
 
-    public Offering(EOfferingType type, Schedule schedule) {
+    public Offering(EOfferingMode type, Schedule schedule) {
         this.type = type;
         this.schedule = schedule;
     }
 
-    public EOfferingType getType() {
+    public EOfferingMode getType() {
         return type;
     }
 
-    public void setType(EOfferingType type) {
+    public void setType(EOfferingMode type) {
         this.type = type;
     }
 

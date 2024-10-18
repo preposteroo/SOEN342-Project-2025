@@ -5,14 +5,16 @@ import com.soen342HB.coursecompass.spaces.Space;
 public class Schedule {
     private String startDate;
     private String endDate;
+    private EDayOfWeek dayOfWeek;
     private String startTime;
     private String endTime;
     private Space space;
 
-    public Schedule(String startDate, String endDate, String startTime, String endTime,
-            Space space) {
+    public Schedule(String startDate, String endDate, EDayOfWeek dayOfWeek, String startTime,
+            String endTime, Space space) {
         this.startDate = startDate;
         this.endDate = endDate;
+        this.dayOfWeek = dayOfWeek;
         this.startTime = startTime;
         this.endTime = endTime;
         this.space = space;
@@ -32,6 +34,14 @@ public class Schedule {
 
     public void setEndDate(String endDate) {
         this.endDate = endDate;
+    }
+
+    public EDayOfWeek getDayOfWeek() {
+        return dayOfWeek;
+    }
+
+    public void setDayOfWeek(EDayOfWeek dayOfWeek) {
+        this.dayOfWeek = dayOfWeek;
     }
 
     public String getStartTime() {

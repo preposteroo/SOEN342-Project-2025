@@ -8,6 +8,4 @@ public interface IDAO<T> {
     public T fetchFromDb(String id);
 
     public void updateDb(T t);
-
-    public boolean authenticate(String username, String password);
 }

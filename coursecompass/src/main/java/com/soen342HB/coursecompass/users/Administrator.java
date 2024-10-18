@@ -1,6 +1,13 @@
 package com.soen342HB.coursecompass.users;
 
 import java.util.Set;
+import com.soen342HB.coursecompass.offerings.EDayOfWeek;
+import com.soen342HB.coursecompass.offerings.EOfferingMode;
+import com.soen342HB.coursecompass.offerings.Offering;
+import com.soen342HB.coursecompass.offerings.OfferingDAO;
+import com.soen342HB.coursecompass.offerings.Schedule;
+import com.soen342HB.coursecompass.spaces.Space;
+import com.soen342HB.coursecompass.utils.InputManager;
 
 public class Administrator extends PrivateUser {
     private String username;
@@ -10,7 +17,7 @@ public class Administrator extends PrivateUser {
     public void executeCommand(String[] args) {
         switch (args[0]) {
             case "offerings":
-                offerings(args[1]);
+                offerings(args);
                 break;
             default:
                 super.executeCommand(args);
@@ -24,10 +31,31 @@ public class Administrator extends PrivateUser {
         return list;
     }
 
-    private void offerings(String flag) {
-        switch (flag) {
+    private void offerings(String[] flags) {
+        switch (flags[1]) {
             case "create":
                 System.out.println("Creating an offering...");
+                System.out.println("The course mode can be 'group' or 'individual'.");
+                System.out.print("Enter the course mode: ");
+                EOfferingMode courseType = EOfferingMode.from(InputManager.getInput());
+                System.out.print("Enter the start date: ");
+                String startDate = InputManager.getInput();
+                System.out.print("Enter the end date: ");
+                String endDate = InputManager.getInput();
+                System.out.print("Enter the day of the week: ");
+                String dayOfWeek = InputManager.getInput();
+                System.out.print("Enter the start time: ");
+                String startTime = InputManager.getInput();
+                System.out.print("Enter the end time: ");
+                String endTime = InputManager.getInput();
+                System.out.print("Enter the space name: ");
+                String spacename = InputManager.getInput();
+                Space space = new Space(spacename);
+                Schedule schedule = new Schedule(startDate, endDate, EDayOfWeek.from(dayOfWeek),
+                        startTime, endTime, space);
+                Offering offering = new Offering(courseType, schedule);
+                OfferingDAO offeringDAO = new OfferingDAO();
+                offeringDAO.addToDb(offering);
                 break;
             default:
                 System.out.println("Invalid use of the command offerings.");
