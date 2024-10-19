@@ -16,12 +16,12 @@ public class InstructorDAO implements IDAO<Instructor> {
     @Override
     public void addtoDb(Instructor instructor) {
         String sql =
-                "INSERT INTO instructors (username, password, specialization) VALUES (?, ?, ?)";
+                "INSERT INTO users (username, password, user_type) VALUES (?, ?, 'INSTRUCTOR')";
         try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, instructor.getUsername());
             statement.setString(2, instructor.getPassword());
-            statement.setString(3, instructor.getSpecialization());
+            // statement.setString(3, instructor.getSpecialization());
             // statement.setString(4, String.join(",", instructor.getCities()));
             statement.executeUpdate();
             System.out.println("Instructor added successfully.");
@@ -32,7 +32,7 @@ public class InstructorDAO implements IDAO<Instructor> {
 
     @Override
     public void removeFromDb(Instructor instructor) {
-        String sql = "DELETE FROM instructors WHERE username = ?";
+        String sql = "DELETE FROM users WHERE username = ? AND user_type = 'INSTRUCTOR'";
         try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, instructor.getUsername());
@@ -49,16 +49,17 @@ public class InstructorDAO implements IDAO<Instructor> {
 
     @Override
     public Instructor fetchFromDb(String username) {
-        String sql = "SELECT * FROM instructors WHERE username = ?";
+        String sql = "SELECT * FROM users WHERE username = ? AND user_type = 'INSTRUCTOR'";
         try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, username);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 String password = resultSet.getString("password");
-                String specialization = resultSet.getString("specialization");
-                String cities = resultSet.getString("cities");
-                return new Instructor(username, password, specialization, cities.split(","));
+                // String specialization = resultSet.getString("specialization");
+                // String cities = resultSet.getString("cities");
+                // return new Instructor(username, password, specialization, cities.split(","));
+                return new Instructor(username, password, "math", new String[] {"Montreal"});
             } else {
                 System.out.println("Instructor not found.");
                 return null;
@@ -71,7 +72,8 @@ public class InstructorDAO implements IDAO<Instructor> {
 
     @Override
     public void updateDb(Instructor instructor) {
-        String sql = "UPDATE instructors SET password = ? WHERE username = ?";
+        String sql =
+                "UPDATE users SET password = ? WHERE username = ? AND user_type = 'INSTRUCTOR'";
         try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, instructor.getPassword());

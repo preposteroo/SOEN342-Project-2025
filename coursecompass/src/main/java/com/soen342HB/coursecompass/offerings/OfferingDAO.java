@@ -20,7 +20,7 @@ public class OfferingDAO implements IDAO<Offering> {
     @Override
     public Offering fetchFromDb(String id) {
         for (Offering offering : db) {
-            if (offering.getSchedule().getSpace().getSpaceName().equals(id)) {
+            if (offering.getId().equals(id)) {
                 return offering;
             }
         }
