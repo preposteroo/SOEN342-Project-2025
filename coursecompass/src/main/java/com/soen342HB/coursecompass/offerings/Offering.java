@@ -1,6 +1,7 @@
 package com.soen342HB.coursecompass.offerings;
 
 public class Offering {
+    private String id;
     // Do we need a DateTime object here?
     private EOfferingMode type;
     private Schedule schedule;
@@ -27,6 +28,14 @@ public class Offering {
     }
 
     public String toString() {
-        return "Offering{" + "type=" + type + ", schedule=" + schedule + '}';
+        return "Offering{" + "id=" + id + ",type=" + type + ", schedule=" + schedule + '}';
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

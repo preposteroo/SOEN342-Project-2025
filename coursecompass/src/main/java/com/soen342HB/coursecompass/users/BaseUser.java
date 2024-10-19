@@ -3,6 +3,8 @@ package com.soen342HB.coursecompass.users;
 import java.util.Set;
 import java.util.HashSet;
 import com.soen342HB.coursecompass.App;
+import com.soen342HB.coursecompass.offerings.Lesson;
+import com.soen342HB.coursecompass.offerings.LessonDAO;
 
 public abstract class BaseUser {
 
@@ -16,6 +18,9 @@ public abstract class BaseUser {
                 break;
             case "":
                 break;
+            case "lessons":
+                lessons();
+                break;
             default:
                 System.out.println("Invalid command.");
         }
@@ -25,6 +30,7 @@ public abstract class BaseUser {
         Set<String> list = new HashSet<String>();
         list.add("help");
         list.add("exit");
+        list.add("offerings");
         return list;
     }
 
@@ -32,6 +38,15 @@ public abstract class BaseUser {
         System.out.println("Available commands:");
         for (String command : getCommands()) {
             System.out.println("  " + command);
+        }
+    }
+
+    public void lessons() {
+        System.out.println("Lessons:");
+        LessonDAO lessonDAO = new LessonDAO();
+        Lesson[] lessons = lessonDAO.fetchAllFromDb();
+        for (Lesson lesson : lessons) {
+            System.out.println("  " + lesson);
         }
     }
 
