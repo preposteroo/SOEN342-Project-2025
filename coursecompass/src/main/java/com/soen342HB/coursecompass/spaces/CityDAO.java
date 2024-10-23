@@ -2,9 +2,9 @@ package com.soen342HB.coursecompass.spaces;
 
 import java.util.ArrayList;
 import java.util.List;
-import com.soen342HB.coursecompass.core.IDAO;
+import com.soen342HB.coursecompass.core.BaseDAO;
 
-public class CityDAO implements IDAO<City> {
+public class CityDAO extends BaseDAO<City> {
     // temp DB
     public static List<City> db = new ArrayList<City>();
 

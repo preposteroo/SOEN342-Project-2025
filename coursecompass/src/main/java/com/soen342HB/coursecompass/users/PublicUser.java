@@ -42,7 +42,7 @@ public class PublicUser extends BaseUser {
         System.out.print("Username: ");
         String username = InputManager.getInput();
         System.out.print("Password: ");
-        String password = InputManager.getPassword();
+        String password = InputManager.getInput();
         switch (userType) {
             case "admin":
                 AdministratorDAO adminDAO = new AdministratorDAO();
@@ -80,7 +80,7 @@ public class PublicUser extends BaseUser {
         System.out.print("Username: ");
         String username = InputManager.getInput();
         System.out.print("Password: ");
-        String password = InputManager.getPassword();
+        String password = InputManager.getInput();
         System.out.print("Confirm password: ");
         String confirmPassword = InputManager.getPassword();
         if (!password.equals(confirmPassword)) {

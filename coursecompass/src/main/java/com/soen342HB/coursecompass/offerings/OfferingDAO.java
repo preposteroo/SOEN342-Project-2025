@@ -1,9 +1,9 @@
 package com.soen342HB.coursecompass.offerings;
 
-import com.soen342HB.coursecompass.core.IDAO;
+import com.soen342HB.coursecompass.core.BaseDAO;
 import java.util.ArrayList;
 
-public class OfferingDAO implements IDAO<Offering> {
+public class OfferingDAO extends BaseDAO<Offering> {
     // temp DB
     public static ArrayList<Offering> db = new ArrayList<Offering>();
 
