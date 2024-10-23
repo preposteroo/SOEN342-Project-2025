@@ -82,7 +82,7 @@ public class PublicUser extends BaseUser {
         System.out.print("Password: ");
         String password = InputManager.getInput();
         System.out.print("Confirm password: ");
-        String confirmPassword = InputManager.getPassword();
+        String confirmPassword = InputManager.getInput();
         if (!password.equals(confirmPassword)) {
             System.out.println("Passwords do not match. Operation failed.");
             return;
@@ -97,9 +97,9 @@ public class PublicUser extends BaseUser {
                 System.out.print("Specialization: ");
                 String specialization = InputManager.getInput();
                 System.out.print("Cities (comma-separated): ");
-                String cities = InputManager.getInput();
+                String cities = InputManager.getInput().toLowerCase();
                 Instructor instructor =
-                        new Instructor(username, password, specialization, cities.split(","));
+                        new Instructor(username, password, specialization, cities.split(",\\s*"));
                 InstructorDAO instructorDAO = new InstructorDAO();
                 instructorDAO.addtoDb(instructor);
                 break;
