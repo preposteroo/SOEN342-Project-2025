@@ -1,16 +1,11 @@
 package com.soen342HB.coursecompass.users;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Set;
 import com.soen342HB.coursecompass.offerings.Lesson;
 import com.soen342HB.coursecompass.offerings.LessonDAO;
 import com.soen342HB.coursecompass.offerings.Offering;
 import com.soen342HB.coursecompass.offerings.OfferingDAO;
-import com.soen342HB.coursecompass.spaces.City;
-import com.soen342HB.coursecompass.spaces.Location;
-import com.soen342HB.coursecompass.spaces.Space;
+
 
 public class Instructor extends PrivateUser {
 	private String username;

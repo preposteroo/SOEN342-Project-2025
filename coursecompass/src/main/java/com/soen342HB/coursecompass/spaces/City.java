@@ -4,11 +4,18 @@ import java.util.ArrayList;
 
 public class City {
     private String cityName;
+    private int id;
     private ArrayList<Location> locations;
-
 
     public City(String cityName) {
         this.cityName = cityName;
+    }
+
+
+    public City(int id, String cityName) {
+        this.id = id;
+        this.cityName = cityName;
+
     }
 
     public String getCityName() {
@@ -17,6 +24,10 @@ public class City {
 
     public void setCityName(String cityName) {
         this.cityName = cityName;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public ArrayList<Location> getLocations() {

@@ -1,5 +1,9 @@
 package com.soen342HB.coursecompass.spaces;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import com.soen342HB.coursecompass.core.BaseDAO;
@@ -10,7 +14,19 @@ public class SpaceDAO extends BaseDAO<Space> {
 
     @Override
     public void addtoDb(Space space) {
-        db.add(space);
+        String insertSpaceSql = "INSERT INTO spaces (space_name) VALUES (?)";
+        try (Connection connection = getConnection()) {
+            try (PreparedStatement insertStmt = connection.prepareStatement(insertSpaceSql,
+                    PreparedStatement.RETURN_GENERATED_KEYS)) {
+                insertStmt.setString(1, space.getSpaceName());
+                insertStmt.executeUpdate();
+            } catch (SQLException e) {
+                System.out.println("SQL error occurred: " + e.getMessage());
+            }
+        } catch (SQLException e) {
+            System.out.println("Connection error occurred: " + e.getMessage());
+        }
+
     }
 
     @Override
@@ -18,14 +34,53 @@ public class SpaceDAO extends BaseDAO<Space> {
         db.remove(space);
     }
 
+    public Integer getSpaceIdByName(String spaceName) {
+        String selectSpaceIdSql = "SELECT id FROM spaces WHERE space_name = ?";
+        Integer spaceId = null;
+
+        try (Connection connection = getConnection();
+                PreparedStatement selectStmt = connection.prepareStatement(selectSpaceIdSql)) {
+
+            selectStmt.setString(1, spaceName);
+
+            try (ResultSet rs = selectStmt.executeQuery()) {
+                if (rs.next()) {
+                    spaceId = rs.getInt("id");
+                } else {
+                    System.out.println("No location found with name: " + spaceName);
+                }
+            } catch (SQLException e) {
+                System.out.println("ResultSet error occurred: " + e.getMessage());
+            }
+        } catch (SQLException e) {
+            System.out.println("Connection error occurred: " + e.getMessage());
+        }
+
+        return spaceId;
+    }
+
     @Override
     public Space fetchFromDb(String id) {
-        for (Space space : db) {
-            if (space.getSpaceName().equals(id)) {
-                return space;
+        String selectSpaceSql = "SELECT id, space_name FROM spaces WHERE id = ?";
+        Space space = null;
+
+        try (Connection connection = getConnection();
+                PreparedStatement selectStmt = connection.prepareStatement(selectSpaceSql)) {
+
+            selectStmt.setString(1, id);
+
+            try (ResultSet rs = selectStmt.executeQuery()) {
+                if (rs.next()) {
+                    space = new Space(rs.getInt("id"), rs.getString("space_name"));
+                } else {
+                    System.out.println("No Space found with ID: " + id);
+                }
             }
+        } catch (SQLException e) {
+            System.out.println("Error occurred: " + e.getMessage());
         }
-        return null;
+
+        return space;
     }
 
     public Space[] fetchAllFromDb() {

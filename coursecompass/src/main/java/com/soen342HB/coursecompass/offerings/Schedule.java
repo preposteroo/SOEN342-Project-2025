@@ -3,6 +3,7 @@ package com.soen342HB.coursecompass.offerings;
 import com.soen342HB.coursecompass.spaces.Space;
 
 public class Schedule {
+    private int id;
     private String startDate;
     private String endDate;
     private EDayOfWeek dayOfWeek;
@@ -19,6 +20,18 @@ public class Schedule {
         this.endTime = endTime;
         this.space = space;
     }
+
+    public Schedule(int id, String startDate, String endDate, EDayOfWeek dayOfWeek,
+            String startTime, String endTime, Space space) {
+        this.id = id;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.dayOfWeek = dayOfWeek;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.space = space;
+    }
+
 
     public String getStartDate() {
         return startDate;
@@ -72,5 +85,13 @@ public class Schedule {
         return "Schedule{" + "startDate=" + startDate + ", endDate=" + endDate + ", dayOfWeek="
                 + dayOfWeek + ", startTime=" + startTime + ", endTime=" + endTime + ", space="
                 + space + '}';
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }

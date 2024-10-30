@@ -1,12 +1,12 @@
 package com.soen342HB.coursecompass.offerings;
 
 public enum EOfferingMode {
-    INDIVIDUAL, GROUP;
+    PRIVATE, GROUP;
 
     public static EOfferingMode from(String str) {
         switch (str.toUpperCase()) {
-            case "INDIVIDUAL":
-                return INDIVIDUAL;
+            case "PRIVATE":
+                return PRIVATE;
             case "GROUP":
                 return GROUP;
             default:

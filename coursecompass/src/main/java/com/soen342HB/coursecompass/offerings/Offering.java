@@ -1,15 +1,24 @@
 package com.soen342HB.coursecompass.offerings;
 
 public class Offering {
-    private String id;
-    // Do we need a DateTime object here?
+    private int id;
     private EOfferingMode type;
+    private String courseName;
     private Schedule schedule;
 
-    public Offering(EOfferingMode type, Schedule schedule) {
+    public Offering(EOfferingMode type, String courseName, Schedule schedule) {
         this.type = type;
+        this.courseName = courseName;
         this.schedule = schedule;
     }
+
+    public Offering(int id, EOfferingMode type, String courseName, Schedule schedule) {
+        this.id = id;
+        this.type = type;
+        this.courseName = courseName;
+        this.schedule = schedule;
+    }
+
 
     public EOfferingMode getType() {
         return type;
@@ -31,11 +40,19 @@ public class Offering {
         return "Offering{" + "id=" + id + ",type=" + type + ", schedule=" + schedule + '}';
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
+    }
+
+    public String getCourseName() {
+        return courseName;
+    }
+
+    public void setCourseName(String courseName) {
+        this.courseName = courseName;
     }
 }
