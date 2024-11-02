@@ -1,14 +1,12 @@
 package com.soen342HB.coursecompass.offerings;
 
 import com.soen342HB.coursecompass.core.BaseDAO;
-import com.soen342HB.coursecompass.offerings.EOfferingMode;
 import com.soen342HB.coursecompass.users.Instructor;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
 
 public class OfferingDAO extends BaseDAO<Offering> {
     public static ArrayList<Offering> db = new ArrayList<Offering>();

@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import com.soen342HB.coursecompass.offerings.Lesson;
-import com.soen342HB.coursecompass.offerings.LessonDAO;
 import com.soen342HB.coursecompass.offerings.Offering;
 import com.soen342HB.coursecompass.offerings.OfferingDAO;
 import com.soen342HB.coursecompass.spaces.City;
