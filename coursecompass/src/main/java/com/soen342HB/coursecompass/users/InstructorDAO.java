@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import com.soen342HB.coursecompass.core.BaseDAO;
 
 public class InstructorDAO extends BaseDAO<Instructor> {
@@ -107,19 +109,40 @@ public class InstructorDAO extends BaseDAO<Instructor> {
         }
     }
 
+    /*
+     * @Override public Instructor fetchFromDb(String username) { String sql =
+     * "SELECT * FROM users WHERE username = ? AND user_type = 'INSTRUCTOR'"; try (Connection
+     * connection = getConnection(); PreparedStatement statement = connection.prepareStatement(sql))
+     * { statement.setString(1, username); ResultSet resultSet = statement.executeQuery(); if
+     * (resultSet.next()) { int id = resultSet.getInt("id"); String password =
+     * resultSet.getString("password"); // String specialization =
+     * resultSet.getString("specialization"); // String cities = resultSet.getString("cities"); //
+     * return new Instructor(username, password, specialization, cities.split(",")); return new
+     * Instructor(username, password, "math", new String[] {"Montreal"}); } else {
+     * System.out.println("Instructor not found."); return null; } } catch (SQLException e) {
+     * System.out.println("SQL error occurred: " + e.getMessage()); return null; } }
+     */
+
     @Override
     public Instructor fetchFromDb(String username) {
-        String sql = "SELECT * FROM users WHERE username = ? AND user_type = 'INSTRUCTOR'";
+        String sql = "SELECT i.id AS instructor_id, u.password, u.username, i.specialization "
+                + "FROM users u " + "JOIN instructors i ON u.id = i.user_id "
+                + "WHERE u.username = ? AND u.user_type = 'INSTRUCTOR'";
+
         try (Connection connection = getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, username);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
+                int instructorId = resultSet.getInt("instructor_id");
                 String password = resultSet.getString("password");
-                // String specialization = resultSet.getString("specialization");
-                // String cities = resultSet.getString("cities");
-                // return new Instructor(username, password, specialization, cities.split(","));
-                return new Instructor(username, password, "math", new String[] {"Montreal"});
+                String specialization = resultSet.getString("specialization");
+
+                // Retrieve available locations
+                String[] availableLocations = getInstructorCities(instructorId, connection);
+
+                return new Instructor(instructorId, username, password, specialization,
+                        availableLocations);
             } else {
                 System.out.println("Instructor not found.");
                 return null;
@@ -129,6 +152,50 @@ public class InstructorDAO extends BaseDAO<Instructor> {
             return null;
         }
     }
+
+    public Instructor fetchFromDb(int instructorId) {
+        String sql = "SELECT i.id AS instructor_id, u.password, u.username, i.specialization "
+                + "FROM instructors i " + "JOIN users u ON u.id = i.user_id " + "WHERE i.id = ?";
+
+        try (Connection connection = getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, instructorId);
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                String username = resultSet.getString("username");
+                String password = resultSet.getString("password");
+                String specialization = resultSet.getString("specialization");
+
+                String[] availableLocations = getInstructorCities(instructorId, connection);
+
+                return new Instructor(instructorId, username, password, specialization,
+                        availableLocations);
+            } else {
+                System.out.println("Instructor not found.");
+                return null;
+            }
+        } catch (SQLException e) {
+            System.out.println("SQL error occurred: " + e.getMessage());
+            return null;
+        }
+    }
+
+    private String[] getInstructorCities(int instructorId, Connection connection)
+            throws SQLException {
+        List<String> cities = new ArrayList<>();
+        String query = "SELECT c.city_name FROM instructor_cities ic "
+                + "JOIN city c ON ic.city_id = c.id " + "WHERE ic.instructor_id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setInt(1, instructorId);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                cities.add(rs.getString("city_name"));
+            }
+        }
+        return cities.toArray(new String[0]); // Convert List to String array
+    }
+
 
     @Override
     public void updateDb(Instructor instructor) {

@@ -4,9 +4,13 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 import com.soen342HB.coursecompass.core.BaseDAO;
+import com.soen342HB.coursecompass.offerings.EDayOfWeek;
+import com.soen342HB.coursecompass.offerings.EOfferingMode;
+import com.soen342HB.coursecompass.offerings.Schedule;
 
 public class SpaceDAO extends BaseDAO<Space> {
     // temp DB
@@ -82,6 +86,45 @@ public class SpaceDAO extends BaseDAO<Space> {
 
         return space;
     }
+
+    public ArrayList<Schedule> getSchedulesForSpace(Space space) {
+        String selectSchedulesSql =
+                "SELECT sch.id, sch.start_date, sch.end_date, sch.day_of_week, sch.start_time, sch.end_time "
+                        + "FROM spaces_schedules ss "
+                        + "JOIN schedules sch ON ss.schedule_id = sch.id "
+                        + "WHERE ss.space_id = ?";
+        ArrayList<Schedule> schedules = new ArrayList<>();
+
+        try (Connection connection = getConnection()) {
+            try (PreparedStatement selectStmt = connection.prepareStatement(selectSchedulesSql)) {
+                selectStmt.setInt(1, space.getId());
+
+                try (ResultSet rs = selectStmt.executeQuery()) {
+                    while (rs.next()) {
+                        int scheduleId = rs.getInt("id");
+                        String startDate = rs.getDate("start_date").toString();
+                        String endDate = rs.getDate("end_date").toString();
+                        EDayOfWeek dayOfWeek =
+                                EDayOfWeek.valueOf(rs.getString("day_of_week").toUpperCase());
+                        String startTime = rs.getTime("start_time").toString();
+                        String endTime = rs.getTime("end_time").toString();
+
+                        schedules.add(new Schedule(scheduleId, startDate, endDate, dayOfWeek,
+                                startTime, endTime, space));
+                    }
+                } catch (SQLException e) {
+                    System.out.println("ResultSet error occurred: " + e.getMessage());
+                }
+            } catch (SQLException e) {
+                System.out.println("SQL error occurred: " + e.getMessage());
+            }
+        } catch (SQLException e) {
+            System.out.println("Connection error occurred: " + e.getMessage());
+        }
+
+        return schedules;
+    }
+
 
     public Space[] fetchAllFromDb() {
         Space[] spaces = new Space[db.size()];

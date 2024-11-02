@@ -6,17 +6,17 @@ public class Offering {
     private String courseName;
     private Schedule schedule;
 
-    public Offering(EOfferingMode type, String courseName, Schedule schedule) {
+    public Offering() {};
+
+    public Offering(EOfferingMode type, String courseName) {
         this.type = type;
         this.courseName = courseName;
-        this.schedule = schedule;
     }
 
-    public Offering(int id, EOfferingMode type, String courseName, Schedule schedule) {
+    public Offering(int id, EOfferingMode type, String courseName) {
         this.id = id;
         this.type = type;
         this.courseName = courseName;
-        this.schedule = schedule;
     }
 
 
