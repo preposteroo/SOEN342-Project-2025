@@ -1,14 +1,16 @@
 package com.soen342HB.coursecompass.offerings;
 
 import com.soen342HB.coursecompass.core.BaseDAO;
+import com.soen342HB.coursecompass.offerings.EOfferingMode;
+import com.soen342HB.coursecompass.users.Instructor;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class OfferingDAO extends BaseDAO<Offering> {
-    // temp DB
     public static ArrayList<Offering> db = new ArrayList<Offering>();
 
     @Override
@@ -64,6 +66,23 @@ public class OfferingDAO extends BaseDAO<Offering> {
         }
     }
 
+    public void offeringToInstructor(Offering offering, Instructor instructor) {
+        String insertOffInsSql =
+                "INSERT INTO instructor_offering (instructor_id, offering_id, availability) VALUES (?, ?, 'available')";
+        try (Connection connection = getConnection()) {
+            try (PreparedStatement insertStmt = connection.prepareStatement(insertOffInsSql)) {
+                insertStmt.setInt(1, instructor.getId());
+                insertStmt.setInt(2, offering.getId());
+                insertStmt.executeUpdate();
+                System.out.println("Offering-Instructor association added successfully.");
+            } catch (SQLException e) {
+                System.out.println("SQL error occurred: " + e.getMessage());
+            }
+        } catch (SQLException e) {
+            System.out.println("Connection error occurred: " + e.getMessage());
+        }
+    }
+
     @Override
     public void removeFromDb(Offering offering) {
         db.remove(offering);
@@ -71,14 +90,52 @@ public class OfferingDAO extends BaseDAO<Offering> {
 
     @Override
     public Offering fetchFromDb(String id) {
-        for (Offering offering : db) {
-            String stringId = String.valueOf(offering.getId());
-            if (stringId.equals(id)) {
-                return offering;
+        String selectOfferingSql =
+                "SELECT id, course_name, offering_mode FROM offerings WHERE id = ?";
+        Offering offering = null;
+
+        try (Connection connection = getConnection();
+                PreparedStatement selectStmt = connection.prepareStatement(selectOfferingSql)) {
+
+            selectStmt.setString(1, id);
+
+            try (ResultSet rs = selectStmt.executeQuery()) {
+                if (rs.next()) {
+                    offering = new Offering(rs.getInt("id"),
+                            EOfferingMode.from(rs.getString("offering_mode")),
+                            rs.getString("course_name"));
+                } else {
+                    System.out.println("No offering found with ID: " + id);
+                }
             }
+        } catch (SQLException e) {
+            System.out.println("Error occurred: " + e.getMessage());
         }
-        return null;
+
+        return offering;
     }
+
+    public int getOfferingIdByScheduleId(int scheduleId) {
+        int offeringId = -1;
+        String query = "SELECT offering_id FROM schedule_offering WHERE schedule_id = ?";
+
+        try (Connection connection = getConnection();
+                PreparedStatement statement = connection.prepareStatement(query)) {
+
+            statement.setInt(1, scheduleId);
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                offeringId = resultSet.getInt("offering_id");
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error retrieving offering ID: " + e.getMessage());
+        }
+
+        return offeringId;
+    }
+
 
     public Offering[] fetchAllFromDb() {
         Offering[] offerings = new Offering[db.size()];

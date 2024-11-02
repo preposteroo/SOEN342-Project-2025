@@ -3,18 +3,16 @@ package com.soen342HB.coursecompass.offerings;
 import com.soen342HB.coursecompass.users.Instructor;
 
 public class Lesson {
-    private Offering offering;
-    private Instructor instructor;
     private String id;
+    private Schedule schedule;
+    private Instructor instructor;
+    private String available;
 
-    public Lesson(Offering offering, Instructor instructor, String id) {
-        this.offering = offering;
-        this.instructor = instructor;
+    public Lesson(String id, Schedule schedule, Instructor instructor, String available) {
         this.id = id;
-    }
-
-    public Offering getOffering() {
-        return offering;
+        this.schedule = schedule;
+        this.instructor = instructor;
+        this.available = available;
     }
 
     public Instructor getInstructor() {
@@ -25,10 +23,6 @@ public class Lesson {
         return id;
     }
 
-    public void setOffering(Offering offering) {
-        this.offering = offering;
-    }
-
     public void setInstructor(Instructor instructor) {
         this.instructor = instructor;
     }
@@ -36,6 +30,7 @@ public class Lesson {
     public void setId(String id) {
         this.id = id;
     }
+
 
     @Override
     public boolean equals(Object obj) {
@@ -48,6 +43,24 @@ public class Lesson {
 
     @Override
     public String toString() {
-        return id + " (" + offering + ", " + instructor + ")";
+        return id + " (" + schedule + ", " + instructor + ")";
+    }
+
+
+    public Schedule getSchedule() {
+        return schedule;
+    }
+
+
+    public void setSchedule(Schedule schedule) {
+        this.schedule = schedule;
+    }
+
+    public String getAvailable() {
+        return available;
+    }
+
+    public void setAvailable(String available) {
+        this.available = available;
     }
 }

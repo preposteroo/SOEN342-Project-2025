@@ -2,6 +2,7 @@ package com.soen342HB.coursecompass.users;
 
 import java.util.Set;
 import java.util.HashSet;
+import java.util.List;
 import com.soen342HB.coursecompass.App;
 import com.soen342HB.coursecompass.offerings.Lesson;
 import com.soen342HB.coursecompass.offerings.LessonDAO;
@@ -44,7 +45,7 @@ public abstract class BaseUser {
     public void lessons() {
         System.out.println("Lessons:");
         LessonDAO lessonDAO = new LessonDAO();
-        Lesson[] lessons = lessonDAO.fetchAllFromDb();
+        List<Lesson> lessons = lessonDAO.fetchAllFromDb();
         for (Lesson lesson : lessons) {
             System.out.println("  " + lesson);
         }

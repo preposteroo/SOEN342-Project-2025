@@ -32,6 +32,16 @@ public class Schedule {
         this.space = space;
     }
 
+    public Schedule(int id, String startDate, String endDate, EDayOfWeek dayOfWeek,
+            String startTime, String endTime) {
+        this.id = id;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.dayOfWeek = dayOfWeek;
+        this.startTime = startTime;
+        this.endTime = endTime;
+    }
+
 
     public String getStartDate() {
         return startDate;

@@ -65,7 +65,14 @@ public class PublicUser extends BaseUser {
                 }
                 break;
             case "student":
-                // TODO: Implement student login
+                StudentDAO studentDAO = new StudentDAO();
+                Student student = studentDAO.fetchFromDb(username);
+                if (student != null && student.getPassword().equals(password)) {
+                    System.out.println("Welcome, " + username + "!");
+                    App.setUser(student);
+                } else {
+                    System.out.println("Invalid username or password");
+                }
                 break;
             default:
                 System.out.println("Invalid user type");
@@ -104,7 +111,9 @@ public class PublicUser extends BaseUser {
                 instructorDAO.addtoDb(instructor);
                 break;
             case "student":
-                // Implement student creation
+                Student student = new Student(username, password);
+                StudentDAO studentDAO = new StudentDAO();
+                studentDAO.addtoDb(student);
                 break;
             default:
                 System.out.println("Invalid user type");
