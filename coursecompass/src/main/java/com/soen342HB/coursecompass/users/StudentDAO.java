@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import com.mysql.cj.xdevapi.Client;
 import com.soen342HB.coursecompass.core.BaseDAO;
 
 public class StudentDAO extends BaseDAO<Student> {

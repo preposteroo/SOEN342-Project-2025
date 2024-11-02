@@ -17,6 +17,7 @@ import com.soen342HB.coursecompass.spaces.LocationDAO;
 import com.soen342HB.coursecompass.spaces.Space;
 import com.soen342HB.coursecompass.spaces.SpaceDAO;
 import com.soen342HB.coursecompass.utils.InputManager;
+import com.soen342HB.coursecompass.offerings.Booking;
 
 public class Student extends PrivateUser {
     private int id;
@@ -33,6 +34,9 @@ public class Student extends PrivateUser {
             case "booklesson":
                 booklesson(args);
                 break;
+            case "mylessons":
+                mylessons();
+                break;
             default:
                 super.executeCommand(args);
         }
@@ -42,6 +46,8 @@ public class Student extends PrivateUser {
         Set<String> list = super.getCommands();
         list.add("viewlessons");
         list.add("booklesson");
+        list.add("mylessons");
+
         return list;
     }
 
@@ -147,6 +153,33 @@ public class Student extends PrivateUser {
             System.out.println("Lesson not available, it's already been booked!");
         }
 
+    }
+
+    public void mylessons() {
+        List<Booking> myBookings;
+        LessonDAO lessonDAO = new LessonDAO();
+        OfferingDAO offeringDAO = new OfferingDAO();
+        Lesson lesson;
+        Schedule schedule;
+        Offering offering;
+        myBookings = lessonDAO.fetchAllBookingsForUserId(this.getId());
+        System.out.println("Here are your bookings, " + this.username + "\n");
+        for (Booking booking : myBookings) {
+            if (booking.getDependentName() != null) {
+                System.out.println("This booking is for " + booking.getDependentName() + " who is "
+                        + booking.getDependentAge() + " years old.");
+            }
+            lesson = lessonDAO.fetchFromDb(String.valueOf(booking.getLessonId()));
+            schedule = lesson.getSchedule();
+            offering = offeringDAO.fetchFromDb(
+                    String.valueOf(offeringDAO.getOfferingIdByScheduleId(schedule.getId())));
+            System.out.println(offering.getType() + " " + offering.getCourseName()
+                    + " lesson with instructor " + lesson.getInstructor().getUsername());
+            System.out.println("It takes place from" + schedule.getStartDate() + " to "
+                    + schedule.getEndDate() + " on " + schedule.getDayOfWeek() + " between "
+                    + schedule.getStartTime() + " and " + schedule.getEndTime());
+
+        }
     }
 
     public Student(int id, String username, String password) {
