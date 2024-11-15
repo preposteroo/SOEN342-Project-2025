@@ -71,7 +71,7 @@ public class ScheduleDAO extends BaseDAO<Schedule> {
 
     public void scheduleToInstructor(Schedule schedule, Instructor instructor) {
         String insertSchInsSql =
-                "INSERT INTO instructor_schedule (instructor_id, schedule_id, availability) VALUES (?, ?, 'available')";
+                "INSERT INTO lessons (instructor_id, schedule_id, availability) VALUES (?, ?, 'available')";
         try (Connection connection = getConnection()) {
             try (PreparedStatement insertStmt = connection.prepareStatement(insertSchInsSql)) {
                 insertStmt.setInt(1, instructor.getId());

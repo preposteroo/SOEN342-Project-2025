@@ -28,7 +28,7 @@ public class LessonDAO extends BaseDAO<Lesson> {
 
     public Lesson fetchFromDb(String lessonId) {
         String sql =
-                "SELECT id, instructor_id, schedule_id, availability FROM instructor_schedule WHERE id = ?";
+                "SELECT id, instructor_id, schedule_id, availability FROM lessons WHERE id = ?";
         Lesson lesson = null;
         InstructorDAO instructorDAO = new InstructorDAO();
         ScheduleDAO scheduleDAO = new ScheduleDAO();
@@ -62,7 +62,7 @@ public class LessonDAO extends BaseDAO<Lesson> {
 
 
     public List<Lesson> fetchAllFromDb() {
-        String sql = "SELECT id, instructor_id, schedule_id, availability FROM instructor_schedule";
+        String sql = "SELECT id, instructor_id, schedule_id, availability FROM lessons";
         List<Lesson> lessons = new ArrayList<>();
         InstructorDAO instructorDAO = new InstructorDAO();
         ScheduleDAO scheduleDAO = new ScheduleDAO();
@@ -135,7 +135,7 @@ public class LessonDAO extends BaseDAO<Lesson> {
 
     public void updateAvailability(int instructorId, int scheduleId, String availability) {
         String updateAvailabilitySql =
-                "UPDATE instructor_schedule SET availability = ? WHERE instructor_id = ? AND schedule_id = ?";
+                "UPDATE lessons SET availability = ? WHERE instructor_id = ? AND schedule_id = ?";
 
         try (Connection connection = getConnection()) {
             try (PreparedStatement updateStmt =
@@ -198,7 +198,7 @@ public class LessonDAO extends BaseDAO<Lesson> {
     public void updateDb(Lesson lesson) {}
 
     public void removeFromDb(Lesson lesson) {
-        String deleteLessonSql = "DELETE FROM instructor_schedule WHERE id = ?";
+        String deleteLessonSql = "DELETE FROM lessons WHERE id = ?";
 
         try (Connection connection = getConnection();
                 PreparedStatement deleteStmt = connection.prepareStatement(deleteLessonSql)) {

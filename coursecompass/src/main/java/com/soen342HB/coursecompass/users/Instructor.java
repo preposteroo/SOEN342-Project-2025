@@ -52,21 +52,21 @@ public class Instructor extends PrivateUser {
 		for (City city : cities) {
 			System.out.println(city.getId() + ". " + city.getCityName().toUpperCase());
 		}
-		System.out.println("Please type the Number of the City:");
-		String cityId = InputManager.getInput();
+		System.out.println("Please type the name of the City:");
+		String cityName = InputManager.getInput();
 		City city;
-		city = cityDAO.fetchFromDb(cityId);
+		city = cityDAO.fetchFromDbByName(cityName);
 		System.out.println("Here are the locations for " + city.getCityName());
 		city.setLocations(cityDAO.getLocationsForCity(city));
 		for (Location location : city.getLocations()) {
 			System.out.println(location.getId() + ". " + location.getLocationName().toUpperCase());
 		}
-		System.out.println("Please type the Number of the Location");
+		System.out.println("Please type the name of the Location");
 
-		String locationId = InputManager.getInput();
+		String locationName = InputManager.getInput();
 		LocationDAO locationDAO = new LocationDAO();
 		Location location;
-		location = locationDAO.fetchFromDb(locationId);
+		location = locationDAO.fetchFromDbByName(locationName);
 
 		System.out.println("Here are the spaces for " + location.getLocationName());
 
@@ -75,11 +75,11 @@ public class Instructor extends PrivateUser {
 			System.out.println(space.getId() + ". " + space.getSpaceName().toUpperCase());
 		}
 
-		System.out.println("Please type the Number of the Space");
-		String spaceId = InputManager.getInput();
+		System.out.println("Please type the name of the Space");
+		String spaceName = InputManager.getInput();
 		SpaceDAO spaceDAO = new SpaceDAO();
 		Space space;
-		space = spaceDAO.fetchFromDb(spaceId);
+		space = spaceDAO.fetchFromDbByName(spaceName);
 		OfferingDAO offeringDAO = new OfferingDAO();
 		Offering offering = new Offering();
 		space.setSchedules(spaceDAO.getSchedulesForSpace(space));

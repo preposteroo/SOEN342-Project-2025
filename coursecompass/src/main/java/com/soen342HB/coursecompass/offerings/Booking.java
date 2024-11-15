@@ -14,6 +14,13 @@ public class Booking {
         this.dependentAge = dependentAge;
     }
 
+    public Booking(int userId, int lessonId) {
+        this.userId = userId;
+        this.lessonId = lessonId;
+        this.dependentName = null;
+        this.dependentAge = -1;
+    }
+
 
     public Booking(int id, int userId, int lessonId, String dependentName, int dependentAge) {
         this.id = id;

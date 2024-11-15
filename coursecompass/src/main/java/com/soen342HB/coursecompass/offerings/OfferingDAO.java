@@ -15,7 +15,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class OfferingDAO extends BaseDAO<Offering> {
-    public static ArrayList<Offering> db = new ArrayList<Offering>();
 
     @Override
     public void addtoDb(Offering offering) {
@@ -89,7 +88,14 @@ public class OfferingDAO extends BaseDAO<Offering> {
 
     @Override
     public void removeFromDb(Offering offering) {
-        db.remove(offering);
+        String sql = "DELETE FROM offerings WHERE id = ?";
+        try (Connection connection = getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, offering.getId());
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Error occurred: " + e.getMessage());
+        }
     }
 
     @Override
@@ -142,6 +148,27 @@ public class OfferingDAO extends BaseDAO<Offering> {
 
 
     public void fetchAllFromDb() {
+        String sql = "SELECT id, course_name, offering_mode FROM offerings";
+        ArrayList<Offering> offerings = new ArrayList<>();
+        try (Connection connection = getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)) {
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                int id = resultSet.getInt("id");
+                String courseName = resultSet.getString("course_name");
+                EOfferingMode offeringMode =
+                        EOfferingMode.from(resultSet.getString("offering_mode"));
+                Offering offering = new Offering(id, offeringMode, courseName);
+                offerings.add(offering);
+            }
+        } catch (SQLException e) {
+            System.out.println("SQL error occurred: " + e.getMessage());
+        }
+        if (offerings.isEmpty()) {
+            System.out.println("No offerings found.");
+            return;
+        }
+
         CityDAO cityDAO = new CityDAO();
         LocationDAO locationDAO = new LocationDAO();
         SpaceDAO spaceDAO = new SpaceDAO();
@@ -174,12 +201,15 @@ public class OfferingDAO extends BaseDAO<Offering> {
 
     @Override
     public void updateDb(Offering offering) {
-        for (Offering o : db) {
-            if (o.getSchedule().getSpace().getSpaceName()
-                    .equals(offering.getSchedule().getSpace().getSpaceName())) {
-                o.setType(offering.getType());
-                o.setSchedule(offering.getSchedule());
-            }
+        String sql = "UPDATE offerings SET course_name = ?, offering_mode = ? WHERE id = ?";
+        try (Connection connection = getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, offering.getCourseName());
+            statement.setString(2, offering.getType().name());
+            statement.setInt(3, offering.getId());
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Error occurred: " + e.getMessage());
         }
     }
 }

@@ -147,13 +147,25 @@ public class Student extends PrivateUser {
 
                 // lessonDAO.addBookingToDb(student.getId(), Integer.parseInt(lesson.getId()),
                 // dependent_name, Integer.parseInt(dependent_age));
-
-
+            } else if (dependent.equals("no")) {
+                BookingDAO bookingDAO = new BookingDAO();
+                Booking booking = new Booking(student.getId(), Integer.parseInt(lesson.getId()));
+                bookingDAO.addtoDb(booking);
+                // lessonDAO.addBookingToDb(student.getId(), Integer.parseInt(lesson.getId()));
+            } else {
+                System.out.println("Invalid input");
+                return;
             }
 
-            lessonDAO.updateAvailability(lesson.getInstructor().getId(),
-                    lesson.getSchedule().getId(), "not available");
-
+            BookingDAO bookingDAO = new BookingDAO();
+            Booking booking =
+                    bookingDAO.fetchFromDbByValues(student.getId(), Integer.parseInt(args[1]));
+            if (booking != null) {
+                lessonDAO.updateAvailability(lesson.getInstructor().getId(),
+                        lesson.getSchedule().getId(), "not available");
+            } else {
+                System.out.println("There was an error booking the lesson");
+            }
         } else {
             System.out.println("Lesson not available, it's already been booked!");
         }
@@ -175,6 +187,8 @@ public class Student extends PrivateUser {
                 System.out.println("Booking ID: " + booking.getId() + ". This booking is for "
                         + booking.getDependentName() + " who is " + booking.getDependentAge()
                         + " years old.");
+            } else {
+                System.out.println("Booking ID: " + booking.getId() + ". This booking is for you.");
             }
             lesson = lessonDAO.fetchFromDb(String.valueOf(booking.getLessonId()));
             schedule = lesson.getSchedule();

@@ -12,6 +12,7 @@ public class PublicUser extends BaseUser {
     public Set<String> getCommands() {
         Set<String> list = super.getCommands();
         list.add("login");
+        list.add("register");
         return list;
     }
 
@@ -20,6 +21,9 @@ public class PublicUser extends BaseUser {
         switch (args[0]) {
             case "login":
                 login();
+                break;
+            case "register":
+                register();
                 break;
             default:
                 super.executeCommand(args);
@@ -74,5 +78,21 @@ public class PublicUser extends BaseUser {
                 System.out.println("Invalid user type");
         }
         System.out.println("You are now logged in as " + App.getUser().getIdentity());
+    }
+
+    private void register() {
+        System.out.print("Username: ");
+        String username = InputManager.getInput();
+        System.out.print("Password: ");
+        String password = InputManager.getInput();
+        System.out.print("Confirm password: ");
+        String confirmPassword = InputManager.getInput();
+        if (!password.equals(confirmPassword)) {
+            System.out.println("Passwords do not match. Operation failed.");
+            return;
+        }
+        Student student = new Student(username, password);
+        StudentDAO studentDAO = new StudentDAO();
+        studentDAO.addtoDb(student);
     }
 }

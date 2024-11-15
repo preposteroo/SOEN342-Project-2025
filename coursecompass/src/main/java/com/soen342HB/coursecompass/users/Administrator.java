@@ -37,6 +37,9 @@ public class Administrator extends PrivateUser {
             case "makeuser":
                 makeuser();
                 break;
+            case "viewofferings":
+                viewofferings();
+                break;
             default:
                 super.executeCommand(args);
         }
@@ -48,6 +51,7 @@ public class Administrator extends PrivateUser {
         list.add("offerings");
         list.add("database");
         list.add("makeuser");
+        list.add("viewofferings");
         return list;
     }
 
@@ -253,6 +257,12 @@ public class Administrator extends PrivateUser {
                 System.out.println("Invalid user type");
                 return;
         }
+    }
+
+    public void viewofferings() {
+        System.out.println("Here are all the offerings in the system: ");
+        OfferingDAO offeringDAO = new OfferingDAO();
+        offeringDAO.fetchAllFromDb();
     }
 
 
