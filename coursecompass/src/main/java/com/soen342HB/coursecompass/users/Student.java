@@ -18,6 +18,7 @@ import com.soen342HB.coursecompass.spaces.Space;
 import com.soen342HB.coursecompass.spaces.SpaceDAO;
 import com.soen342HB.coursecompass.utils.InputManager;
 import com.soen342HB.coursecompass.offerings.Booking;
+import com.soen342HB.coursecompass.offerings.BookingDAO;
 
 public class Student extends PrivateUser {
     private int id;
@@ -37,6 +38,9 @@ public class Student extends PrivateUser {
             case "mylessons":
                 mylessons();
                 break;
+            case "cancellesson":
+                cancellesson(args);
+                break;
             default:
                 super.executeCommand(args);
         }
@@ -47,6 +51,7 @@ public class Student extends PrivateUser {
         list.add("viewlessons");
         list.add("booklesson");
         list.add("mylessons");
+        list.add("cancellesson");
 
         return list;
     }
@@ -101,8 +106,6 @@ public class Student extends PrivateUser {
         for (Lesson lesson : lessons) {
             Schedule lessonSchedule = lesson.getSchedule();
             for (Schedule schedule : schedules) {
-                System.out.print(lessonSchedule.getId());
-                System.out.print(schedule.getId());
                 if (lessonSchedule.getId() == schedule.getId()) {
                     lessonsForSpace.add(schedule);
                     confirmedLessons.add(lesson);
@@ -110,8 +113,6 @@ public class Student extends PrivateUser {
                 }
             }
         }
-
-
 
         Map<String, List<Schedule>> groupedSchedules =
                 scheduleDAO.groupSchedulesByDateRange(lessonsForSpace);
@@ -139,9 +140,13 @@ public class Student extends PrivateUser {
                 String dependent_name = InputManager.getInput();
                 System.out.println("What is your dependent's age?: ");
                 String dependent_age = InputManager.getInput();
-
-                lessonDAO.addBookingToDb(student.getId(), Integer.parseInt(lesson.getId()),
+                BookingDAO bookingDAO = new BookingDAO();
+                Booking booking = new Booking(student.getId(), Integer.parseInt(lesson.getId()),
                         dependent_name, Integer.parseInt(dependent_age));
+                bookingDAO.addtoDb(booking);
+
+                // lessonDAO.addBookingToDb(student.getId(), Integer.parseInt(lesson.getId()),
+                // dependent_name, Integer.parseInt(dependent_age));
 
 
             }
@@ -159,15 +164,17 @@ public class Student extends PrivateUser {
         List<Booking> myBookings;
         LessonDAO lessonDAO = new LessonDAO();
         OfferingDAO offeringDAO = new OfferingDAO();
+        BookingDAO bookingDAO = new BookingDAO();
         Lesson lesson;
         Schedule schedule;
         Offering offering;
-        myBookings = lessonDAO.fetchAllBookingsForUserId(this.getId());
+        myBookings = bookingDAO.fetchAllBookingsForUserId(this.getId());
         System.out.println("Here are your bookings, " + this.username + "\n");
         for (Booking booking : myBookings) {
             if (booking.getDependentName() != null) {
-                System.out.println("This booking is for " + booking.getDependentName() + " who is "
-                        + booking.getDependentAge() + " years old.");
+                System.out.println("Booking ID: " + booking.getId() + ". This booking is for "
+                        + booking.getDependentName() + " who is " + booking.getDependentAge()
+                        + " years old.");
             }
             lesson = lessonDAO.fetchFromDb(String.valueOf(booking.getLessonId()));
             schedule = lesson.getSchedule();
@@ -175,11 +182,33 @@ public class Student extends PrivateUser {
                     String.valueOf(offeringDAO.getOfferingIdByScheduleId(schedule.getId())));
             System.out.println(offering.getType() + " " + offering.getCourseName()
                     + " lesson with instructor " + lesson.getInstructor().getUsername());
-            System.out.println("It takes place from" + schedule.getStartDate() + " to "
+            System.out.println("It takes place from " + schedule.getStartDate() + " to "
                     + schedule.getEndDate() + " on " + schedule.getDayOfWeek() + " between "
                     + schedule.getStartTime() + " and " + schedule.getEndTime());
 
         }
+    }
+
+    public void cancellesson(String[] args) {
+        if (args.length < 2) {
+            System.out.println("Usage: cancellesson <lesson_id>");
+            return;
+        }
+        System.out.println("Are you sure you want to delete Booking: " + args[1] + "? y/n");
+        String answer = InputManager.getInput();
+        if (answer.equals("n")) {
+            System.out.println("Booking not deleted");
+            return;
+        } else {
+            BookingDAO bookingDAO = new BookingDAO();
+            LessonDAO lessonDAO = new LessonDAO();
+            Booking booking = bookingDAO.fetchFromDb(args[1]);
+            Lesson lesson = lessonDAO.fetchFromDb(String.valueOf(booking.getLessonId()));
+            lessonDAO.updateAvailability(lesson.getInstructor().getId(),
+                    lesson.getSchedule().getId(), "available");
+            bookingDAO.removeFromDb(booking);
+        }
+
     }
 
     public Student(int id, String username, String password) {

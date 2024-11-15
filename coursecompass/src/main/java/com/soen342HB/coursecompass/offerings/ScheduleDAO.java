@@ -101,13 +101,14 @@ public class ScheduleDAO extends BaseDAO<Schedule> {
     public void printGroupedSchedules(Map<String, List<Schedule>> groupedSchedules,
             Offering offering, OfferingDAO offeringDAO, City city, Location location, Space space,
             List<Lesson> lessons) {
+
         for (Map.Entry<String, List<Schedule>> entry : groupedSchedules.entrySet()) {
             String dateRange = entry.getKey();
             List<Schedule> schedules = entry.getValue();
 
             if (lessons.isEmpty()) {
-
-                System.out.println("Schedules for date range: " + dateRange);
+                // Print offerings for date ranges without lessons
+                System.out.println("Offerings for date range: " + dateRange);
 
                 for (Schedule schedule : schedules) {
                     offering = offeringDAO.fetchFromDb(String
@@ -121,31 +122,37 @@ public class ScheduleDAO extends BaseDAO<Schedule> {
                             + schedule.getEndTime());
                 }
                 System.out.println();
-            } else {
 
+            } else {
+                // Print lessons associated with specific date ranges
                 System.out.println("Lessons for date range: " + dateRange);
-                Schedule schedule;
 
                 for (Lesson lesson : lessons) {
-                    schedule = lesson.getSchedule();
-                    offering = offeringDAO.fetchFromDb(String
-                            .valueOf(offeringDAO.getOfferingIdByScheduleId(schedule.getId())));
-                    System.out.println(
-                            "ID: " + lesson.getId() + ". " + lesson.getAvailable().toUpperCase()
-                                    + "- We offer a " + offering.getType().toString().toLowerCase()
-                                    + " " + offering.getCourseName() + " course taught by "
-                                    + lesson.getInstructor().getIdentity() + " in "
-                                    + city.getCityName() + " in " + location.getLocationName()
-                                    + " at " + space.getSpaceName() + ".");
-                    System.out.println("  - Day of Week: " + schedule.getDayOfWeek()
-                            + ", Start Time: " + schedule.getStartTime() + ", End Time: "
-                            + schedule.getEndTime());
+                    Schedule lessonSchedule = lesson.getSchedule();
+                    String lessonDateRange =
+                            lessonSchedule.getStartDate() + " - " + lessonSchedule.getEndDate();
+
+                    // Check if lesson’s schedule falls within the current date range
+                    if (lessonDateRange.equals(dateRange)) {
+                        offering = offeringDAO.fetchFromDb(String.valueOf(
+                                offeringDAO.getOfferingIdByScheduleId(lessonSchedule.getId())));
+                        System.out.println("ID: " + lesson.getId() + ". "
+                                + lesson.getAvailable().toUpperCase() + "- We offer a "
+                                + offering.getType().toString().toLowerCase() + " "
+                                + offering.getCourseName() + " course taught by "
+                                + lesson.getInstructor().getIdentity() + " in " + city.getCityName()
+                                + " in " + location.getLocationName() + " at "
+                                + space.getSpaceName() + ".");
+                        System.out.println("  - Day of Week: " + lessonSchedule.getDayOfWeek()
+                                + ", Start Time: " + lessonSchedule.getStartTime() + ", End Time: "
+                                + lessonSchedule.getEndTime());
+                    }
                 }
                 System.out.println();
-
             }
         }
     }
+
 
     @Override
     public Schedule fetchFromDb(String id) {

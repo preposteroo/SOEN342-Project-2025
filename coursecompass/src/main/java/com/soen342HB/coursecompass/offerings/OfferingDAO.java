@@ -2,6 +2,12 @@ package com.soen342HB.coursecompass.offerings;
 
 import com.soen342HB.coursecompass.core.BaseDAO;
 import com.soen342HB.coursecompass.users.Instructor;
+import com.soen342HB.coursecompass.spaces.City;
+import com.soen342HB.coursecompass.spaces.CityDAO;
+import com.soen342HB.coursecompass.spaces.Location;
+import com.soen342HB.coursecompass.spaces.LocationDAO;
+import com.soen342HB.coursecompass.spaces.SpaceDAO;
+import com.soen342HB.coursecompass.spaces.Space;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -135,12 +141,35 @@ public class OfferingDAO extends BaseDAO<Offering> {
     }
 
 
-    public Offering[] fetchAllFromDb() {
-        Offering[] offerings = new Offering[db.size()];
-        for (int i = 0; i < db.size(); i++) {
-            offerings[i] = db.get(i);
+    public void fetchAllFromDb() {
+        CityDAO cityDAO = new CityDAO();
+        LocationDAO locationDAO = new LocationDAO();
+        SpaceDAO spaceDAO = new SpaceDAO();
+        City[] cities = cityDAO.fetchAllFromDb();
+        for (City city : cities) {
+            city.setLocations(cityDAO.getLocationsForCity(city));
+            if (city.getLocations().isEmpty()) {
+                continue;
+            }
+            System.out.println("Offerings in " + city.getCityName());
+            for (Location location : city.getLocations()) {
+                location.setSpaces(locationDAO.getSpacesForLocation(location));
+                for (Space space : location.getSpaces()) {
+                    space.setSchedules(spaceDAO.getSchedulesForSpace(space));
+                    for (Schedule schedule : space.getSchedules()) {
+                        Offering offering = fetchFromDb(
+                                String.valueOf(getOfferingIdByScheduleId(schedule.getId())));
+                        System.out.println(offering.getId() + " " + location.getLocationName() + " "
+                                + space.getSpaceName() + " " + schedule.getStartDate() + " "
+                                + schedule.getEndDate() + " " + schedule.getStartTime() + " "
+                                + schedule.getEndTime() + " " + schedule.getDayOfWeek() + " "
+                                + offering.getCourseName() + " " + offering.getType());
+                    }
+
+                }
+            }
         }
-        return offerings;
+
     }
 
     @Override
