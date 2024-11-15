@@ -81,6 +81,9 @@ public class PublicUser extends BaseUser {
     }
 
     private void register() {
+        System.out.println("Are you an instructor or a student?");
+        System.out.print("Type 'instructor' or 'student': ");
+        String userType = InputManager.getInput();
         System.out.print("Username: ");
         String username = InputManager.getInput();
         System.out.print("Password: ");
@@ -91,8 +94,32 @@ public class PublicUser extends BaseUser {
             System.out.println("Passwords do not match. Operation failed.");
             return;
         }
-        Student student = new Student(username, password);
-        StudentDAO studentDAO = new StudentDAO();
-        studentDAO.addtoDb(student);
+        switch (userType) {
+            case "instructor":
+                System.out.print("Specialization: ");
+                String specialization = InputManager.getInput();
+                System.out.print("Cities (comma-separated): ");
+                String cities = InputManager.getInput().toLowerCase();
+                Instructor instructor =
+                        new Instructor(username, password, specialization, cities.split(",\\s*"));
+                InstructorDAO instructorDAO = new InstructorDAO();
+                instructorDAO.addtoDb(instructor);
+                break;
+            case "student":
+                System.out.println("What is your age?");
+                int age = Integer.parseInt(InputManager.getInput());
+                if (age < 18) {
+                    System.out
+                            .println("You must be at least 18 years old to register as a student.");
+                    return;
+                }
+                Student student = new Student(username, password);
+                StudentDAO studentDAO = new StudentDAO();
+                studentDAO.addtoDb(student);
+                break;
+            default:
+                System.out.println("Invalid user type");
+                return;
+        }
     }
 }

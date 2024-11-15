@@ -17,8 +17,6 @@ import com.soen342HB.coursecompass.users.InstructorDAO;
 
 public class LessonDAO extends BaseDAO<Lesson> {
 
-    List<Lesson> lessons = new ArrayList<Lesson>();
-
     public LessonDAO() {}
 
     public void addtoDb(Lesson lesson) {

@@ -18,6 +18,12 @@ public class OfferingDAO extends BaseDAO<Offering> {
 
     @Override
     public void addtoDb(Offering offering) {
+        try {
+            startWrite();
+        } catch (Exception e) {
+            System.out.println("Error occurred while acquiring write lock: " + e.getMessage());
+            return;
+        }
         String insertOfferingSql =
                 "INSERT INTO offerings (course_name, offering_mode) VALUES (?, ?)";
 
@@ -49,6 +55,8 @@ public class OfferingDAO extends BaseDAO<Offering> {
         } catch (SQLException e) {
             System.out.println("Connection error occurred: " + e.getMessage());
         }
+
+        endWrite();
     }
 
 
