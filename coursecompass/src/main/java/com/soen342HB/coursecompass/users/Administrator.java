@@ -34,6 +34,9 @@ public class Administrator extends PrivateUser {
             case "database":
                 database();
                 break;
+            case "makeuser":
+                makeuser();
+                break;
             default:
                 super.executeCommand(args);
         }
@@ -44,6 +47,7 @@ public class Administrator extends PrivateUser {
         Set<String> list = super.getCommands();
         list.add("offerings");
         list.add("database");
+        list.add("makeuser");
         return list;
     }
 
@@ -208,6 +212,47 @@ public class Administrator extends PrivateUser {
         }
 
 
+    }
+
+    private void makeuser() {
+        System.out.println("Are you an administrator, an instructor or a student?");
+        System.out.print("Type 'admin', 'instructor' or 'student': ");
+        String userType = InputManager.getInput();
+        System.out.print("Username: ");
+        String username = InputManager.getInput();
+        System.out.print("Password: ");
+        String password = InputManager.getInput();
+        System.out.print("Confirm password: ");
+        String confirmPassword = InputManager.getInput();
+        if (!password.equals(confirmPassword)) {
+            System.out.println("Passwords do not match. Operation failed.");
+            return;
+        }
+        switch (userType) {
+            case "admin":
+                Administrator admin = new Administrator(username, password);
+                AdministratorDAO adminDAO = new AdministratorDAO();
+                adminDAO.addtoDb(admin);
+                break;
+            case "instructor":
+                System.out.print("Specialization: ");
+                String specialization = InputManager.getInput();
+                System.out.print("Cities (comma-separated): ");
+                String cities = InputManager.getInput().toLowerCase();
+                Instructor instructor =
+                        new Instructor(username, password, specialization, cities.split(",\\s*"));
+                InstructorDAO instructorDAO = new InstructorDAO();
+                instructorDAO.addtoDb(instructor);
+                break;
+            case "student":
+                Student student = new Student(username, password);
+                StudentDAO studentDAO = new StudentDAO();
+                studentDAO.addtoDb(student);
+                break;
+            default:
+                System.out.println("Invalid user type");
+                return;
+        }
     }
 
 
