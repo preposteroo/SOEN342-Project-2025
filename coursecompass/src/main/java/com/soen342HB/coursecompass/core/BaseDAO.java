@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 public abstract class BaseDAO<T> {
     private static final String URL =
-            "jdbc:mysql://localhost:3306/CourseCompass_db?serverTimezone=UTC";
+            "jdbc:mysql://76.66.175.66:3300/CourseCompass_db?serverTimezone=UTC";
     private static final String USER = "root";
     private static final String PASSWORD = "toor";
 

@@ -30,8 +30,8 @@ public class ScheduleDAO extends BaseDAO<Schedule> {
                 insertStmt.setDate(1, java.sql.Date.valueOf(schedule.getStartDate()));
                 insertStmt.setDate(2, java.sql.Date.valueOf(schedule.getEndDate()));
                 insertStmt.setString(3, schedule.getDayOfWeek().name());
-                insertStmt.setTime(4, java.sql.Time.valueOf(schedule.getStartTime()));
-                insertStmt.setTime(5, java.sql.Time.valueOf(schedule.getEndTime()));
+                insertStmt.setTime(4, java.sql.Time.valueOf(schedule.getStartTime() + ":00"));
+                insertStmt.setTime(5, java.sql.Time.valueOf(schedule.getEndTime() + ":00"));
 
                 int rowsAffected = insertStmt.executeUpdate();
                 if (rowsAffected > 0) {
