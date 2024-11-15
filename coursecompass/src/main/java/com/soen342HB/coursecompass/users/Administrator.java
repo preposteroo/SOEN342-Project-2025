@@ -28,11 +28,17 @@ public class Administrator extends PrivateUser {
     @Override
     public void executeCommand(String[] args) {
         switch (args[0]) {
-            case "offerings":
-                offerings(args);
+            case "makeoffering":
+                makeoffering();
                 break;
             case "database":
                 database();
+                break;
+            case "makeuser":
+                makeuser();
+                break;
+            case "viewofferings":
+                viewofferings();
                 break;
             default:
                 super.executeCommand(args);
@@ -44,16 +50,12 @@ public class Administrator extends PrivateUser {
         Set<String> list = super.getCommands();
         list.add("offerings");
         list.add("database");
+        list.add("makeuser");
+        list.add("viewofferings");
         return list;
     }
 
-    private void offerings(String[] flags) {
-        // if (flags.length < 2) {
-        // System.out.println("Invalid use of the command offerings.");
-        // return;
-        // }
-        // switch (flags[1]) {
-        // case "create":
+    private void makeoffering() {
         System.out.println("Creating an offering...");
 
         System.out.println("Which City is the offering in?:");
@@ -62,9 +64,9 @@ public class Administrator extends PrivateUser {
         for (City city : cities) {
             System.out.println(city.getId() + ". " + city.getCityName().toUpperCase());
         }
-        System.out.println("Please type the Number of the City, Or to enter a new City type new:");
+        System.out.println("Please type the name of the City, Or to enter a new City type new:");
         String cityId = InputManager.getInput();
-        City city;
+        City city = null;
         if (cityId.equals("new")) {
             System.out.println("Please enter your new city's name: ");
             String newCityName = InputManager.getInput();
@@ -72,7 +74,11 @@ public class Administrator extends PrivateUser {
             cityDAO.addtoDb(city);
             city = cityDAO.fetchFromDbByName(city.getCityName());
         } else {
-            city = cityDAO.fetchFromDb(cityId);
+            city = cityDAO.fetchFromDbByName(cityId);
+        }
+
+        if (city == null) {
+            return;
         }
         System.out.println();
 
@@ -81,12 +87,12 @@ public class Administrator extends PrivateUser {
         for (Location location : city.getLocations()) {
             System.out.println(location.getId() + ". " + location.getLocationName().toUpperCase());
         }
-        System.out.println("Please type the Number of the Location, Or To Enter a New Location in "
+        System.out.println("Please type the name of the Location, Or To Enter a New Location in "
                 + city.getCityName() + ", type new: ");
 
         String locationId = InputManager.getInput();
         LocationDAO locationDAO = new LocationDAO();
-        Location location;
+        Location location = null;
         if (locationId.equals("new")) {
             System.out.println("Please enter your new location's name: ");
             String newLocationName = InputManager.getInput();
@@ -95,7 +101,11 @@ public class Administrator extends PrivateUser {
             location.setId(locationDAO.getLocationIdByName(location.getLocationName()));
             cityDAO.locationToCity(location, city);
         } else {
-            location = locationDAO.fetchFromDb(locationId);
+            location = locationDAO.fetchFromDbByName(locationId);
+        }
+
+        if (location == null) {
+            return;
         }
         System.out.println();
 
@@ -106,7 +116,7 @@ public class Administrator extends PrivateUser {
             System.out.println(space.getId() + ". " + space.getSpaceName().toUpperCase());
         }
 
-        System.out.println("Please type the Number of the Space, Or To Enter a New Space in "
+        System.out.println("Please type the name of the Space, Or To Enter a New Space in "
                 + location.getLocationName() + ", type new: ");
         String spaceId = InputManager.getInput();
         SpaceDAO spaceDAO = new SpaceDAO();
@@ -120,7 +130,7 @@ public class Administrator extends PrivateUser {
             space.setId(spaceDAO.getSpaceIdByName(space.getSpaceName()));
             locationDAO.spaceToLocation(space, location);
         } else {
-            space = spaceDAO.fetchFromDb(spaceId);
+            space = spaceDAO.fetchFromDbByName(spaceId);
         }
 
 
@@ -130,15 +140,15 @@ public class Administrator extends PrivateUser {
         EOfferingMode courseType = EOfferingMode.from(InputManager.getInput());
         System.out.println("What type of course is it? (Judo,Yoga...etc)");
         String courseName = InputManager.getInput();
-        System.out.print("Enter the start date: ");
+        System.out.print("Enter the start date (yyyy-mm-dd): ");
         String startDate = InputManager.getInput();
-        System.out.print("Enter the end date: ");
+        System.out.print("Enter the end date (yyyy-mm-dd): ");
         String endDate = InputManager.getInput();
         System.out.print("Enter the day of the week: ");
         String dayOfWeek = InputManager.getInput();
-        System.out.print("Enter the start time: ");
+        System.out.print("Enter the start time (24-hr HH:MM): ");
         String startTime = InputManager.getInput();
-        System.out.print("Enter the end time: ");
+        System.out.print("Enter the end time (24-hr HH:MM): ");
         String endTime = InputManager.getInput();
 
         Schedule schedule = new Schedule(startDate, endDate, EDayOfWeek.from(dayOfWeek), startTime,
@@ -206,6 +216,53 @@ public class Administrator extends PrivateUser {
         }
 
 
+    }
+
+    private void makeuser() {
+        System.out.println("Are you an administrator, an instructor or a student?");
+        System.out.print("Type 'admin', 'instructor' or 'student': ");
+        String userType = InputManager.getInput();
+        System.out.print("Username: ");
+        String username = InputManager.getInput();
+        System.out.print("Password: ");
+        String password = InputManager.getInput();
+        System.out.print("Confirm password: ");
+        String confirmPassword = InputManager.getInput();
+        if (!password.equals(confirmPassword)) {
+            System.out.println("Passwords do not match. Operation failed.");
+            return;
+        }
+        switch (userType) {
+            case "admin":
+                Administrator admin = new Administrator(username, password);
+                AdministratorDAO adminDAO = new AdministratorDAO();
+                adminDAO.addtoDb(admin);
+                break;
+            case "instructor":
+                System.out.print("Specialization: ");
+                String specialization = InputManager.getInput();
+                System.out.print("Cities (comma-separated): ");
+                String cities = InputManager.getInput().toLowerCase();
+                Instructor instructor =
+                        new Instructor(username, password, specialization, cities.split(",\\s*"));
+                InstructorDAO instructorDAO = new InstructorDAO();
+                instructorDAO.addtoDb(instructor);
+                break;
+            case "student":
+                Student student = new Student(username, password);
+                StudentDAO studentDAO = new StudentDAO();
+                studentDAO.addtoDb(student);
+                break;
+            default:
+                System.out.println("Invalid user type");
+                return;
+        }
+    }
+
+    public void viewofferings() {
+        System.out.println("Here are all the offerings in the system: ");
+        OfferingDAO offeringDAO = new OfferingDAO();
+        offeringDAO.fetchAllFromDb();
     }
 
 

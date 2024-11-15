@@ -58,6 +58,29 @@ public class LocationDAO extends BaseDAO<Location> {
         return location;
     }
 
+    public Location fetchFromDbByName(String name) {
+        String selectLocationSql = "SELECT id, location_name FROM location WHERE location_name = ?";
+        Location location = null;
+
+        try (Connection connection = getConnection();
+                PreparedStatement selectStmt = connection.prepareStatement(selectLocationSql)) {
+
+            selectStmt.setString(1, name);
+
+            try (ResultSet rs = selectStmt.executeQuery()) {
+                if (rs.next()) {
+                    location = new Location(rs.getInt("id"), rs.getString("location_name"));
+                } else {
+                    System.out.println("No location found with name: " + name);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error occurred: " + e.getMessage());
+        }
+
+        return location;
+    }
+
     public Integer getLocationIdByName(String locationName) {
         String selectLocationIdSql = "SELECT id FROM location WHERE location_name = ?";
         Integer locationId = null;

@@ -12,7 +12,7 @@ public class PublicUser extends BaseUser {
     public Set<String> getCommands() {
         Set<String> list = super.getCommands();
         list.add("login");
-        list.add("makeuser");
+        list.add("register");
         return list;
     }
 
@@ -22,8 +22,8 @@ public class PublicUser extends BaseUser {
             case "login":
                 login();
                 break;
-            case "makeuser":
-                makeuser();
+            case "register":
+                register();
                 break;
             default:
                 super.executeCommand(args);
@@ -80,9 +80,9 @@ public class PublicUser extends BaseUser {
         System.out.println("You are now logged in as " + App.getUser().getIdentity());
     }
 
-    private void makeuser() {
-        System.out.println("Are you an administrator, an instructor or a student?");
-        System.out.print("Type 'admin', 'instructor' or 'student': ");
+    private void register() {
+        System.out.println("Are you an instructor or a student?");
+        System.out.print("Type 'instructor' or 'student': ");
         String userType = InputManager.getInput();
         System.out.print("Username: ");
         String username = InputManager.getInput();
@@ -95,11 +95,6 @@ public class PublicUser extends BaseUser {
             return;
         }
         switch (userType) {
-            case "admin":
-                Administrator admin = new Administrator(username, password);
-                AdministratorDAO adminDAO = new AdministratorDAO();
-                adminDAO.addtoDb(admin);
-                break;
             case "instructor":
                 System.out.print("Specialization: ");
                 String specialization = InputManager.getInput();
@@ -111,6 +106,13 @@ public class PublicUser extends BaseUser {
                 instructorDAO.addtoDb(instructor);
                 break;
             case "student":
+                System.out.println("What is your age?");
+                int age = Integer.parseInt(InputManager.getInput());
+                if (age < 18) {
+                    System.out
+                            .println("You must be at least 18 years old to register as a student.");
+                    return;
+                }
                 Student student = new Student(username, password);
                 StudentDAO studentDAO = new StudentDAO();
                 studentDAO.addtoDb(student);

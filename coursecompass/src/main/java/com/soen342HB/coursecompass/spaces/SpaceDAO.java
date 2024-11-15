@@ -85,6 +85,29 @@ public class SpaceDAO extends BaseDAO<Space> {
         return space;
     }
 
+    public Space fetchFromDbByName(String name) {
+        String selectSpaceSql = "SELECT id, space_name FROM spaces WHERE space_name = ?";
+        Space space = null;
+
+        try (Connection connection = getConnection();
+                PreparedStatement selectStmt = connection.prepareStatement(selectSpaceSql)) {
+
+            selectStmt.setString(1, name);
+
+            try (ResultSet rs = selectStmt.executeQuery()) {
+                if (rs.next()) {
+                    space = new Space(rs.getInt("id"), rs.getString("space_name"));
+                } else {
+                    System.out.println("No Space found with name: " + name);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error occurred: " + e.getMessage());
+        }
+
+        return space;
+    }
+
     public ArrayList<Schedule> getSchedulesForSpace(Space space) {
         String selectSchedulesSql =
                 "SELECT sch.id, sch.start_date, sch.end_date, sch.day_of_week, sch.start_time, sch.end_time "

@@ -12,15 +12,24 @@ public class BookingDAO extends BaseDAO<Booking> {
 
     @Override
     public void addtoDb(Booking booking) {
-        String insertBookingSql =
-                "INSERT INTO bookings (user_id, lesson_id, dependent_name, dependent_age) VALUES (?, ?, ?, ?)";
+        try {
+            startWrite();
+        } catch (Exception e) {
+            System.out.println("Error occurred while acquiring write lock: " + e.getMessage());
+            return;
+        }
+        String insertBookingSql = booking.getDependentName() != null
+                ? "INSERT INTO bookings (user_id, lesson_id, dependent_name, dependent_age) VALUES (?, ?, ?, ?)"
+                : "INSERT INTO bookings (user_id, lesson_id) VALUES (?, ?)";
 
         try (Connection connection = getConnection()) {
             try (PreparedStatement insertStmt = connection.prepareStatement(insertBookingSql)) {
                 insertStmt.setInt(1, booking.getUserId());
                 insertStmt.setInt(2, booking.getLessonId());
-                insertStmt.setString(3, booking.getDependentName());
-                insertStmt.setInt(4, booking.getDependentAge());
+                if (booking.getDependentName() != null) {
+                    insertStmt.setString(3, booking.getDependentName());
+                    insertStmt.setInt(4, booking.getDependentAge());
+                }
                 insertStmt.executeUpdate();
                 System.out.println("Booking added successfully.");
             } catch (SQLException e) {
@@ -29,10 +38,17 @@ public class BookingDAO extends BaseDAO<Booking> {
         } catch (SQLException e) {
             System.out.println("Connection error occurred: " + e.getMessage());
         }
+        endWrite();
     }
 
 
     public List<Booking> fetchAllBookingsForUserId(int userId) {
+        try {
+            startRead();
+        } catch (Exception e) {
+            System.out.println("Error occurred while acquiring read lock: " + e.getMessage());
+            return new ArrayList<>();
+        }
         String sql =
                 "SELECT id, lesson_id, dependent_name, dependent_age FROM bookings WHERE user_id = ?";
         List<Booking> bookings = new ArrayList<>();
@@ -54,12 +70,18 @@ public class BookingDAO extends BaseDAO<Booking> {
         } catch (SQLException e) {
             System.out.println("SQL error occurred: " + e.getMessage());
         }
-
+        endRead();
         return bookings;
     }
 
     @Override
     public void removeFromDb(Booking booking) {
+        try {
+            startWrite();
+        } catch (Exception e) {
+            System.out.println("Error occurred while acquiring write lock: " + e.getMessage());
+            return;
+        }
         String deleteBookingSql = "DELETE FROM bookings WHERE user_id = ? AND lesson_id = ?";
 
         try (Connection connection = getConnection();
@@ -78,10 +100,17 @@ public class BookingDAO extends BaseDAO<Booking> {
         } catch (SQLException e) {
             System.out.println("SQL error occurred while deleting booking: " + e.getMessage());
         }
+        endWrite();
     }
 
     @Override
     public Booking fetchFromDb(String id) {
+        try {
+            startRead();
+        } catch (Exception e) {
+            System.out.println("Error occurred while acquiring read lock: " + e.getMessage());
+            return null;
+        }
         String fetchBookingSql =
                 "SELECT user_id, lesson_id, dependent_name, dependent_age FROM bookings WHERE id = ?";
         Booking booking = null;
@@ -107,10 +136,54 @@ public class BookingDAO extends BaseDAO<Booking> {
             System.out.println("SQL error occurred while fetching booking: " + e.getMessage());
         }
 
+        endRead();
+        return booking;
+    }
+
+    public Booking fetchFromDbByValues(int userId, int lessonId) {
+        try {
+            startRead();
+        } catch (Exception e) {
+            System.out.println("Error occurred while acquiring read lock: " + e.getMessage());
+            return null;
+        }
+        String fetchBookingSql =
+                "SELECT id, dependent_name, dependent_age FROM bookings WHERE user_id = ? AND lesson_id = ?";
+        Booking booking = null;
+
+        try (Connection connection = getConnection();
+                PreparedStatement fetchStmt = connection.prepareStatement(fetchBookingSql)) {
+
+            fetchStmt.setInt(1, userId);
+            fetchStmt.setInt(2, lessonId);
+
+            try (ResultSet resultSet = fetchStmt.executeQuery()) {
+                if (resultSet.next()) {
+                    int id = resultSet.getInt("id");
+                    String dependentName = resultSet.getString("dependent_name");
+                    int dependentAge = resultSet.getInt("dependent_age");
+
+                    booking = new Booking(id, userId, lessonId, dependentName, dependentAge);
+                } else {
+                    System.out.println("No booking found for user ID " + userId + " and lesson ID "
+                            + lessonId);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("SQL error occurred while fetching booking: " + e.getMessage());
+        }
+
+        endRead();
         return booking;
     }
 
     public List<Booking> fetchAllFromDb() {
+        try {
+            startRead();
+        } catch (Exception e) {
+            System.out.println("Error occurred while acquiring read lock: " + e.getMessage());
+            return new ArrayList<>();
+        }
         String fetchAllBookingsSql =
                 "SELECT id, user_id, lesson_id, dependent_name, dependent_age FROM bookings";
         List<Booking> bookings = new ArrayList<>();
@@ -133,13 +206,40 @@ public class BookingDAO extends BaseDAO<Booking> {
             System.out.println("SQL error occurred while fetching all bookings: " + e.getMessage());
         }
 
+        endRead();
+
         return bookings;
     }
 
     @Override
     public void updateDb(Booking t) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'updateDb'");
+        try {
+            startWrite();
+        } catch (Exception e) {
+            System.out.println("Error occurred while acquiring write lock: " + e.getMessage());
+            return;
+        }
+        String updateBookingSql =
+                "UPDATE bookings SET dependent_name = ?, dependent_age = ? WHERE id = ?";
+
+        try (Connection connection = getConnection();
+                PreparedStatement updateStmt = connection.prepareStatement(updateBookingSql)) {
+
+            updateStmt.setString(1, t.getDependentName());
+            updateStmt.setInt(2, t.getDependentAge());
+            updateStmt.setInt(3, t.getId());
+
+            int rowsAffected = updateStmt.executeUpdate();
+            if (rowsAffected > 0) {
+                System.out.println("Booking with ID " + t.getId() + " updated successfully.");
+            } else {
+                System.out.println("No booking found with ID " + t.getId());
+            }
+        } catch (SQLException e) {
+            System.out.println("SQL error occurred while updating booking: " + e.getMessage());
+        }
+
+        endWrite();
     }
 
 

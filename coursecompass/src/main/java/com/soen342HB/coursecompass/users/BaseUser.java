@@ -46,7 +46,12 @@ public abstract class BaseUser {
         System.out.println("Lessons:");
         LessonDAO lessonDAO = new LessonDAO();
         List<Lesson> lessons = lessonDAO.fetchAllFromDb();
-        lessonDAO.printLessons(lessons);
+        if (lessons.isEmpty()) {
+            System.out.println("No lessons found.");
+            return;
+        } else {
+            lessonDAO.printLessons(lessons);
+        }
     }
 
     public abstract String getIdentity();
