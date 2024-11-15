@@ -173,4 +173,10 @@ public class Instructor extends PrivateUser {
 	public void setId(int id) {
 		this.id = id;
 	}
+
+	public String toString() {
+		return "Instructor " + username + " \\(\\" + password + "\\)\\ " + " teaches "
+				+ specialization + " and is available to work in " + cities.toString();
+
+	}
 }

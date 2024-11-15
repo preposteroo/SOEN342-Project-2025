@@ -7,6 +7,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import com.soen342HB.coursecompass.core.BaseDAO;
+import com.soen342HB.coursecompass.spaces.City;
+import com.soen342HB.coursecompass.spaces.CityDAO;
+import com.soen342HB.coursecompass.spaces.Location;
+import com.soen342HB.coursecompass.spaces.LocationDAO;
+import com.soen342HB.coursecompass.spaces.Space;
+import com.soen342HB.coursecompass.spaces.SpaceDAO;
 import com.soen342HB.coursecompass.users.InstructorDAO;
 
 public class LessonDAO extends BaseDAO<Lesson> {
@@ -83,6 +89,50 @@ public class LessonDAO extends BaseDAO<Lesson> {
         return lessons;
     }
 
+    public void printLessons(List<Lesson> lessons) {
+        CityDAO cityDAO = new CityDAO();
+        LocationDAO locationDAO = new LocationDAO();
+        SpaceDAO spaceDAO = new SpaceDAO();
+        OfferingDAO offeringDAO = new OfferingDAO();
+        City[] cities = cityDAO.fetchAllFromDb();
+        for (City city : cities) {
+            city.setLocations(cityDAO.getLocationsForCity(city));
+            if (city.getLocations().isEmpty()) {
+                continue;
+            }
+            System.out.println("Lessons in " + city.getCityName().toUpperCase());
+            for (Location location : city.getLocations()) {
+                location.setSpaces(locationDAO.getSpacesForLocation(location));
+                for (Space space : location.getSpaces()) {
+                    space.setSchedules(spaceDAO.getSchedulesForSpace(space));
+                    for (Lesson lesson : lessons) {
+                        Schedule lessonSchedule = lesson.getSchedule();
+                        for (Schedule schedule : space.getSchedules()) {
+                            if (lessonSchedule.getId() == schedule.getId()) {
+                                Offering offering = offeringDAO.fetchFromDb(String.valueOf(
+                                        offeringDAO.getOfferingIdByScheduleId(schedule.getId())));
+                                System.out.println(lesson.getId() + ".  "
+                                        + lesson.getAvailable().toUpperCase() + " "
+                                        + offering.getCourseName() + " class ," + offering.getType()
+                                        + " taught by " + lesson.getInstructor().getUsername()
+                                        + ". " + "\n" + "Located in " + location.getLocationName()
+                                        + " at " + space.getSpaceName() + " between "
+                                        + schedule.getStartDate() + " - " + schedule.getEndDate()
+                                        + " from " + schedule.getStartTime() + " -  "
+                                        + schedule.getEndTime() + " on " + schedule.getDayOfWeek());
+                                System.out.println();
+                                break;
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
+
+
+    }
+
     public void updateAvailability(int instructorId, int scheduleId, String availability) {
         String updateAvailabilitySql =
                 "UPDATE instructor_schedule SET availability = ? WHERE instructor_id = ? AND schedule_id = ?";
@@ -108,57 +158,62 @@ public class LessonDAO extends BaseDAO<Lesson> {
         }
     }
 
-    public void addBookingToDb(int userId, int lessonId, String dependentName, int dependentAge) {
-        String insertBookingSql =
-                "INSERT INTO bookings (user_id, lesson_id, dependent_name, dependent_age) VALUES (?, ?, ?, ?)";
+    /*
+     * public void addBookingToDb(int userId, int lessonId, String dependentName, int dependentAge)
+     * { String insertBookingSql =
+     * "INSERT INTO bookings (user_id, lesson_id, dependent_name, dependent_age) VALUES (?, ?, ?, ?)"
+     * ;
+     * 
+     * try (Connection connection = getConnection()) { try (PreparedStatement insertStmt =
+     * connection.prepareStatement(insertBookingSql)) { insertStmt.setInt(1, userId);
+     * insertStmt.setInt(2, lessonId); insertStmt.setString(3, dependentName); insertStmt.setInt(4,
+     * dependentAge); insertStmt.executeUpdate(); System.out.println("Booking added successfully.");
+     * } catch (SQLException e) { System.out.println("SQL error occurred: " + e.getMessage()); } }
+     * catch (SQLException e) { System.out.println("Connection error occurred: " + e.getMessage());
+     * } }
+     */
 
-        try (Connection connection = getConnection()) {
-            try (PreparedStatement insertStmt = connection.prepareStatement(insertBookingSql)) {
-                insertStmt.setInt(1, userId);
-                insertStmt.setInt(2, lessonId);
-                insertStmt.setString(3, dependentName);
-                insertStmt.setInt(4, dependentAge);
-                insertStmt.executeUpdate();
-                System.out.println("Booking added successfully.");
-            } catch (SQLException e) {
-                System.out.println("SQL error occurred: " + e.getMessage());
-            }
-        } catch (SQLException e) {
-            System.out.println("Connection error occurred: " + e.getMessage());
-        }
-    }
-
-    public List<Booking> fetchAllBookingsForUserId(int userId) {
-        String sql =
-                "SELECT lesson_id, dependent_name, dependent_age FROM bookings WHERE user_id = ?";
-        List<Booking> bookings = new ArrayList<>();
-
-        try (Connection connection = getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1, userId);
-            ResultSet resultSet = statement.executeQuery();
-
-            while (resultSet.next()) {
-                int lessonId = resultSet.getInt("lesson_id");
-                String dependentName = resultSet.getString("dependent_name");
-                int dependentAge = resultSet.getInt("dependent_age");
-
-                Booking booking = new Booking(userId, lessonId, dependentName, dependentAge);
-                bookings.add(booking);
-            }
-        } catch (SQLException e) {
-            System.out.println("SQL error occurred: " + e.getMessage());
-        }
-
-        return bookings;
-    }
+    /*
+     * public List<Booking> fetchAllBookingsForUserId(int userId) { String sql =
+     * "SELECT lesson_id, dependent_name, dependent_age FROM bookings WHERE user_id = ?";
+     * List<Booking> bookings = new ArrayList<>();
+     * 
+     * try (Connection connection = getConnection(); PreparedStatement statement =
+     * connection.prepareStatement(sql)) { statement.setInt(1, userId); ResultSet resultSet =
+     * statement.executeQuery();
+     * 
+     * while (resultSet.next()) { int lessonId = resultSet.getInt("lesson_id"); String dependentName
+     * = resultSet.getString("dependent_name"); int dependentAge =
+     * resultSet.getInt("dependent_age");
+     * 
+     * Booking booking = new Booking(userId, lessonId, dependentName, dependentAge);
+     * bookings.add(booking); } } catch (SQLException e) { System.out.println("SQL error occurred: "
+     * + e.getMessage()); }
+     * 
+     * return bookings; }
+     */
 
 
 
     public void updateDb(Lesson lesson) {}
 
     public void removeFromDb(Lesson lesson) {
-        lessons.remove(lesson);
+        String deleteLessonSql = "DELETE FROM instructor_schedule WHERE id = ?";
+
+        try (Connection connection = getConnection();
+                PreparedStatement deleteStmt = connection.prepareStatement(deleteLessonSql)) {
+
+            deleteStmt.setString(1, lesson.getId());
+
+            int rowsAffected = deleteStmt.executeUpdate();
+            if (rowsAffected > 0) {
+                System.out.println("Lesson with ID " + lesson.getId() + " deleted successfully.");
+            } else {
+                System.out.println("No lesson found with ID: " + lesson.getId());
+            }
+        } catch (SQLException e) {
+            System.out.println("SQL error occurred while deleting lesson: " + e.getMessage());
+        }
     }
 
 }

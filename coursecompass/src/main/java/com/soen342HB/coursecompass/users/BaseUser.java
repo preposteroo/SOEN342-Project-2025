@@ -31,7 +31,7 @@ public abstract class BaseUser {
         Set<String> list = new HashSet<String>();
         list.add("help");
         list.add("exit");
-        list.add("offerings");
+        list.add("lessons");
         return list;
     }
 
@@ -46,9 +46,7 @@ public abstract class BaseUser {
         System.out.println("Lessons:");
         LessonDAO lessonDAO = new LessonDAO();
         List<Lesson> lessons = lessonDAO.fetchAllFromDb();
-        for (Lesson lesson : lessons) {
-            System.out.println("  " + lesson);
-        }
+        lessonDAO.printLessons(lessons);
     }
 
     public abstract String getIdentity();

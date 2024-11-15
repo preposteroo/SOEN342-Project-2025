@@ -8,7 +8,7 @@ public abstract class BaseDAO<T> {
     private static final String URL =
             "jdbc:mysql://localhost:3306/CourseCompass_db?serverTimezone=UTC";
     private static final String USER = "root";
-    private static final String PASSWORD = "toor";
+    private static final String PASSWORD = "Tjj_mysql02!";
 
     protected Connection getConnection() throws SQLException {
         return DriverManager.getConnection(URL, USER, PASSWORD);

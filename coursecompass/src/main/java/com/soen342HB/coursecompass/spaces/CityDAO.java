@@ -57,6 +57,29 @@ public class CityDAO extends BaseDAO<City> {
         return city;
     }
 
+    public City fetchFromDbByName(String cityName) {
+        String selectCitySql = "SELECT id, city_name FROM city WHERE city_name = ?";
+        City city = null;
+
+        try (Connection connection = getConnection();
+                PreparedStatement selectStmt = connection.prepareStatement(selectCitySql)) {
+
+            selectStmt.setString(1, cityName);
+
+            try (ResultSet rs = selectStmt.executeQuery()) {
+                if (rs.next()) {
+                    city = new City(rs.getInt("id"), rs.getString("city_name"));
+                } else {
+                    System.out.println("No city found with name: " + cityName);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error occurred: " + e.getMessage());
+        }
+
+        return city;
+    }
+
 
     public City[] fetchAllFromDb() {
         String selectCityNamesSql = "SELECT id, city_name FROM city";
