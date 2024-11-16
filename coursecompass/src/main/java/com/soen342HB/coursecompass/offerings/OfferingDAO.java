@@ -104,7 +104,7 @@ public class OfferingDAO extends BaseDAO<Offering> {
                             EOfferingMode.from(rs.getString("offering_mode")),
                             rs.getString("course_name"));
                 } else {
-                    System.out.println("No offering found with ID: " + id);
+                    // System.out.println("No offering found with ID: " + id);
                 }
             }
         } catch (SQLException e) {
@@ -175,11 +175,13 @@ public class OfferingDAO extends BaseDAO<Offering> {
                     for (Schedule schedule : space.getSchedules()) {
                         Offering offering = fetchFromDb(
                                 String.valueOf(getOfferingIdByScheduleId(schedule.getId())));
-                        System.out.println(offering.getId() + " " + location.getLocationName() + " "
-                                + space.getSpaceName() + " " + schedule.getStartDate() + " "
-                                + schedule.getEndDate() + " " + schedule.getStartTime() + " "
-                                + schedule.getEndTime() + " " + schedule.getDayOfWeek() + " "
-                                + offering.getCourseName() + " " + offering.getType());
+                        if (offering != null) {
+                            System.out.println(offering.getId() + " " + location.getLocationName()
+                                    + " " + space.getSpaceName() + " " + schedule.getStartDate()
+                                    + " " + schedule.getEndDate() + " " + schedule.getStartTime()
+                                    + " " + schedule.getEndTime() + " " + schedule.getDayOfWeek()
+                                    + " " + offering.getCourseName() + " " + offering.getType());
+                        }
                     }
 
                 }

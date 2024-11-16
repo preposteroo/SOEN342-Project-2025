@@ -1,6 +1,5 @@
 package com.soen342HB.coursecompass.users;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import com.soen342HB.coursecompass.offerings.Booking;
@@ -201,10 +200,15 @@ public class Administrator extends PrivateUser {
             System.out.println("Here are all the bookings in the system:");
             List<Booking> bookings = bookingDAO.fetchAllFromDb();
             for (Booking booking : bookings) {
+                StudentDAO studentDAO = new StudentDAO();
+                String username = studentDAO.getUsernameById(booking.getUserId());
                 if (booking.getDependentName() != null) {
                     System.out.println("Booking ID: " + booking.getId() + ". This booking is for "
                             + booking.getDependentName() + " who is " + booking.getDependentAge()
-                            + " years old.");
+                            + " years old. The account holder is " + username);
+                } else {
+                    System.out.println(
+                            "Booking ID: " + booking.getId() + ". This booking is for " + username);
                 }
                 lesson = lessonDAO.fetchFromDb(String.valueOf(booking.getLessonId()));
                 schedule = lesson.getSchedule();

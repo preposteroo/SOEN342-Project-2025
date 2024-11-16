@@ -15,7 +15,6 @@ import com.soen342HB.coursecompass.spaces.Location;
 import com.soen342HB.coursecompass.spaces.City;
 
 public class ScheduleDAO extends BaseDAO<Schedule> {
-    List<Schedule> schedules = new ArrayList<Schedule>();
 
     public ScheduleDAO() {}
 
@@ -186,21 +185,79 @@ public class ScheduleDAO extends BaseDAO<Schedule> {
     }
 
 
-    public Schedule[] fetchAllFromDb() {
-        return schedules.toArray(new Schedule[schedules.size()]);
+    public List<Schedule> fetchAllFromDb() {
+        String sql = "SELECT id, start_date, end_date, day_of_week, start_time, end_time "
+                + "FROM schedules";
+        List<Schedule> schedules = new ArrayList<>();
+
+        try (Connection connection = getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql);
+                ResultSet resultSet = statement.executeQuery()) {
+            while (resultSet.next()) {
+                int scheduleId = resultSet.getInt("id");
+                String startDate = resultSet.getDate("start_date").toString();
+                String endDate = resultSet.getDate("end_date").toString();
+                String dayOfWeek = resultSet.getString("day_of_week");
+                String startTime = resultSet.getTime("start_time").toString();
+                String endTime = resultSet.getTime("end_time").toString();
+
+                schedules.add(new Schedule(scheduleId, startDate, endDate,
+                        EDayOfWeek.from(dayOfWeek), startTime, endTime));
+            }
+        } catch (SQLException e) {
+            System.out.println("SQL error occurred: " + e.getMessage());
+        }
+
+        return schedules;
     }
 
     @Override
     public void updateDb(Schedule schedule) {
-        for (Schedule s : schedules) {
-            if (s.getId() == schedule.getId()) {
+        String updateScheduleSql =
+                "UPDATE schedules SET start_date = ?, end_date = ?, day_of_week = ?, start_time = ?, end_time = ? WHERE id = ?";
+
+        try (Connection connection = getConnection()) {
+            try (PreparedStatement updateStmt = connection.prepareStatement(updateScheduleSql)) {
+                updateStmt.setDate(1, java.sql.Date.valueOf(schedule.getStartDate()));
+                updateStmt.setDate(2, java.sql.Date.valueOf(schedule.getEndDate()));
+                updateStmt.setString(3, schedule.getDayOfWeek().name());
+                updateStmt.setTime(4, java.sql.Time.valueOf(schedule.getStartTime() + ":00"));
+                updateStmt.setTime(5, java.sql.Time.valueOf(schedule.getEndTime() + ":00"));
+                updateStmt.setInt(6, schedule.getId());
+
+                int rowsAffected = updateStmt.executeUpdate();
+                if (rowsAffected > 0) {
+                    System.out.println("Schedule updated successfully.");
+                } else {
+                    System.out.println("Schedule not found.");
+                }
+            } catch (SQLException e) {
+                System.out.println("SQL error occurred: " + e.getMessage());
             }
+        } catch (SQLException e) {
+            System.out.println("Connection error occurred: " + e.getMessage());
         }
     }
 
     @Override
     public void removeFromDb(Schedule schedule) {
-        schedules.remove(schedule);
+        String deleteScheduleSql = "DELETE FROM schedules WHERE id = ?";
+
+        try (Connection connection = getConnection()) {
+            try (PreparedStatement deleteStmt = connection.prepareStatement(deleteScheduleSql)) {
+                deleteStmt.setInt(1, schedule.getId());
+                int rowsAffected = deleteStmt.executeUpdate();
+                if (rowsAffected > 0) {
+                    System.out.println("Schedule deleted successfully.");
+                } else {
+                    System.out.println("Schedule not found.");
+                }
+            } catch (SQLException e) {
+                System.out.println("SQL error occurred: " + e.getMessage());
+            }
+        } catch (SQLException e) {
+            System.out.println("Connection error occurred: " + e.getMessage());
+        }
     }
 
 }

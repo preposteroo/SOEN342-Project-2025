@@ -9,7 +9,6 @@ import java.util.List;
 import com.soen342HB.coursecompass.core.BaseDAO;
 
 public class CityDAO extends BaseDAO<City> {
-    public static List<City> db = new ArrayList<City>();
 
     @Override
     public void addtoDb(City city) {
@@ -30,7 +29,17 @@ public class CityDAO extends BaseDAO<City> {
 
     @Override
     public void removeFromDb(City city) {
-        db.remove(city);
+        String deleteCitySql = "DELETE FROM city WHERE id = ?";
+        try (Connection connection = getConnection()) {
+            try (PreparedStatement deleteStmt = connection.prepareStatement(deleteCitySql)) {
+                deleteStmt.setInt(1, city.getId());
+                deleteStmt.executeUpdate();
+            } catch (SQLException e) {
+                System.out.println("SQL error occurred: " + e.getMessage());
+            }
+        } catch (SQLException e) {
+            System.out.println("Connection error occurred: " + e.getMessage());
+        }
     }
 
     @Override
@@ -107,10 +116,18 @@ public class CityDAO extends BaseDAO<City> {
 
     @Override
     public void updateDb(City city) {
-        for (City c : db) {
-            if (c.getCityName().equals(city.getCityName())) {
-                c.setLocations(city.getLocations());
+        String updateCitySql = "UPDATE city SET city_name = ? WHERE id = ?";
+        try (Connection connection = getConnection()) {
+            try (PreparedStatement updateStmt = connection.prepareStatement(updateCitySql)) {
+                updateStmt.setString(1, city.getCityName());
+                updateStmt.setInt(2, city.getId());
+                updateStmt.executeUpdate();
+                System.out.println("City updated successfully.");
+            } catch (SQLException e) {
+                System.out.println("SQL error occurred: " + e.getMessage());
             }
+        } catch (SQLException e) {
+            System.out.println("Connection error occurred: " + e.getMessage());
         }
     }
 

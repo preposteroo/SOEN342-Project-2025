@@ -11,8 +11,6 @@ import com.soen342HB.coursecompass.offerings.EDayOfWeek;
 import com.soen342HB.coursecompass.offerings.Schedule;
 
 public class SpaceDAO extends BaseDAO<Space> {
-    // temp DB
-    public static List<Space> db = new ArrayList<Space>();
 
     @Override
     public void addtoDb(Space space) {
@@ -33,7 +31,17 @@ public class SpaceDAO extends BaseDAO<Space> {
 
     @Override
     public void removeFromDb(Space space) {
-        db.remove(space);
+        String deleteSpaceSql = "DELETE FROM spaces WHERE id = ?";
+        try (Connection connection = getConnection()) {
+            try (PreparedStatement deleteStmt = connection.prepareStatement(deleteSpaceSql)) {
+                deleteStmt.setInt(1, space.getId());
+                deleteStmt.executeUpdate();
+            } catch (SQLException e) {
+                System.out.println("SQL error occurred: " + e.getMessage());
+            }
+        } catch (SQLException e) {
+            System.out.println("Connection error occurred: " + e.getMessage());
+        }
     }
 
     public Integer getSpaceIdByName(String spaceName) {
@@ -170,6 +178,19 @@ public class SpaceDAO extends BaseDAO<Space> {
     }
 
     @Override
-    public void updateDb(Space space) {}
+    public void updateDb(Space space) {
+        String updateSpaceSql = "UPDATE spaces SET space_name = ? WHERE id = ?";
+        try (Connection connection = getConnection()) {
+            try (PreparedStatement updateStmt = connection.prepareStatement(updateSpaceSql)) {
+                updateStmt.setString(1, space.getSpaceName());
+                updateStmt.setInt(2, space.getId());
+                updateStmt.executeUpdate();
+            } catch (SQLException e) {
+                System.out.println("SQL error occurred: " + e.getMessage());
+            }
+        } catch (SQLException e) {
+            System.out.println("Connection error occurred: " + e.getMessage());
+        }
+    }
 
 }

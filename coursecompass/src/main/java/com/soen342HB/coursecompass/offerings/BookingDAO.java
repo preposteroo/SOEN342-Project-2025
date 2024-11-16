@@ -112,7 +112,7 @@ public class BookingDAO extends BaseDAO<Booking> {
             return null;
         }
         String fetchBookingSql =
-                "SELECT user_id, lesson_id, dependent_name, dependent_age FROM bookings WHERE id = ?";
+                "SELECT id, user_id, lesson_id, dependent_name, dependent_age FROM bookings WHERE id = ?";
         Booking booking = null;
 
         try (Connection connection = getConnection();
@@ -122,12 +122,13 @@ public class BookingDAO extends BaseDAO<Booking> {
 
             try (ResultSet resultSet = fetchStmt.executeQuery()) {
                 if (resultSet.next()) {
+                    int bookingId = resultSet.getInt("id");
                     int userId = resultSet.getInt("user_id");
                     int lessonId = resultSet.getInt("lesson_id");
                     String dependentName = resultSet.getString("dependent_name");
                     int dependentAge = resultSet.getInt("dependent_age");
 
-                    booking = new Booking(userId, lessonId, dependentName, dependentAge);
+                    booking = new Booking(bookingId, userId, lessonId, dependentName, dependentAge);
                 } else {
                     System.out.println("No booking found with ID: " + id);
                 }

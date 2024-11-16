@@ -95,4 +95,20 @@ public class StudentDAO extends BaseDAO<Student> {
         }
     }
 
+    public String getUsernameById(int id) {
+        String sql = "SELECT username FROM users WHERE id = ?";
+        String username = null;
+        try (Connection connection = getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, id);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                username = resultSet.getString("username");
+            }
+        } catch (SQLException e) {
+            System.out.println("SQL error occurred: " + e.getMessage());
+        }
+        return username;
+    }
+
 }
