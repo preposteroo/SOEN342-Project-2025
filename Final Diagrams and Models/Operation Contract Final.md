@@ -9,7 +9,7 @@
 * Offering is unique
 
 **Postconditions:**
-* An Offering intance *offering* was created (instance creation)
+* An Offering instance *offering* was created (instance creation)
 * A Schedule instance *schedule* was created (instance creation)
 * *offering.schedule* was set to schedule (attribute modification)
 
@@ -41,7 +41,7 @@ _________________________________________________________________________
 **Cross-References:** Use Case 2: Process Bookings
 
 **Preconditions:**
-* A client is succesfully authenticated and logged in
+* A client is successfully authenticated and logged in
 * The lesson exists
 * The client does not have other lessons which would overlap
 
