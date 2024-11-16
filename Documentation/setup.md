@@ -1,1 +1,1 @@
-To setup the project, first create a new MySQL database. Then, run the `setup.sql` script on it.
+The project should be plug and play, since we have setup a public database (so no database setup required)
