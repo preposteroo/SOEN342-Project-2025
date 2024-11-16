@@ -107,10 +107,10 @@ public class Instructor extends PrivateUser {
 		}
 		ScheduleDAO scheduleDAO = new ScheduleDAO();
 		Schedule schedule = scheduleDAO.fetchFromDb(args[1]);
-		City city = scheduleDAO.getCityFromSchedule(schedule);
+		String cityname = scheduleDAO.getCityNameFromSchedule(schedule);
 		if (schedule == null) {
 			System.out.println("Schedule not found.");
-		} else if (Arrays.asList(cities).contains(city.getCityName())) {
+		} else if (cityname != null && Arrays.asList(cities).contains(cityname)) {
 			scheduleDAO.scheduleToInstructor(schedule, this);
 			System.out.println("Offering taken: " + schedule.getId());
 		} else {
