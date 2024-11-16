@@ -113,6 +113,10 @@ public class ScheduleDAO extends BaseDAO<Schedule> {
                 for (Schedule schedule : schedules) {
                     offering = offeringDAO.fetchFromDb(String
                             .valueOf(offeringDAO.getOfferingIdByScheduleId(schedule.getId())));
+                    if (offering == null) {
+                        System.out.println("Offering not found.");
+                        return;
+                    }
                     System.out.println("ID: " + schedule.getId() + ". We offer a "
                             + offering.getType().toString().toLowerCase() + " "
                             + offering.getCourseName() + " course in " + city.getCityName() + " in "
