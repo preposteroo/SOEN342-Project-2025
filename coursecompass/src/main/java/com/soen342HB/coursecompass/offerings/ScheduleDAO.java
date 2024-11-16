@@ -260,4 +260,29 @@ public class ScheduleDAO extends BaseDAO<Schedule> {
         }
     }
 
+    public City getCityFromSchedule(Schedule schedule) {
+        String sql =
+                "SELECT city_id, city_name FROM cities JOIN locations ON cities.id = locations.city_id "
+                        + "JOIN spaces ON locations.id = spaces.location_id JOIN spaces_schedules ON spaces.id = spaces_schedules.space_id "
+                        + "JOIN schedules ON spaces_schedules.schedule_id = schedules.id WHERE schedules.id = ?";
+        City city = null;
+
+        try (Connection connection = getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, schedule.getId());
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                int cityId = resultSet.getInt("city_id");
+                String cityName = resultSet.getString("city_name");
+                city = new City(cityId, cityName);
+            }
+
+            return city;
+
+        } catch (SQLException e) {
+            System.out.println("SQL error occurred: " + e.getMessage());
+            return null;
+        }
+    }
 }

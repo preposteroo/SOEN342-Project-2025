@@ -1,6 +1,8 @@
 package com.soen342HB.coursecompass.users;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -105,11 +107,14 @@ public class Instructor extends PrivateUser {
 		}
 		ScheduleDAO scheduleDAO = new ScheduleDAO();
 		Schedule schedule = scheduleDAO.fetchFromDb(args[1]);
-		if (schedule != null) {
+		City city = scheduleDAO.getCityFromSchedule(schedule);
+		if (schedule == null) {
+			System.out.println("Schedule not found.");
+		} else if (Arrays.asList(cities).contains(city.getCityName())) {
 			scheduleDAO.scheduleToInstructor(schedule, this);
 			System.out.println("Offering taken: " + schedule.getId());
 		} else {
-			System.out.println("Offering not found.");
+			System.out.println("Offering not available in your city.");
 		}
 
 	}
