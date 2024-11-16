@@ -13,6 +13,7 @@
 * A Schedule instance *schedule* was created (instance creation)
 * *offering.schedule* was set to schedule (attribute modification)
 
+_________________________________________________________________________
 
 **Contract:** takeOffer()
 
@@ -31,6 +32,7 @@
 * *lesson.client* was set to client (attribute modification)
 * *lesson.offering* was set to offering (attribute modification)
 
+_________________________________________________________________________
 
 **Contract:** makeBooking()
 
