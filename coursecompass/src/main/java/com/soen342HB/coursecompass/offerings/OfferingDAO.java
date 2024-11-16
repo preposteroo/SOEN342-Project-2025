@@ -25,7 +25,7 @@ public class OfferingDAO extends BaseDAO<Offering> {
             return;
         }
         String insertOfferingSql =
-                "INSERT INTO offerings (course_name, offering_mode, offering_id) VALUES (?, ?, ?)";
+                "INSERT INTO offerings (course_name, offering_mode) VALUES (?, ?)";
 
         try (Connection connection = getConnection()) {
             try (PreparedStatement insertStmt = connection.prepareStatement(insertOfferingSql,
@@ -34,7 +34,6 @@ public class OfferingDAO extends BaseDAO<Offering> {
                 insertStmt.setString(1, offering.getCourseName());
                 insertStmt.setString(2, offering.getType().name()); // Ensure you're setting the
                                                                     // second parameter correctly
-                insertStmt.setInt(3, offering.getId());
                 // Execute the update
                 int rowsAffected = insertStmt.executeUpdate();
                 if (rowsAffected > 0) {
@@ -61,7 +60,7 @@ public class OfferingDAO extends BaseDAO<Offering> {
 
     public void offeringToInstructor(Offering offering, Instructor instructor) {
         String insertOffInsSql =
-                "INSERT INTO instructor_offering (instructor_id, offering_id, availability) VALUES (?, ?, 'available')";
+                "INSERT INTO lessons (instructor_id, offering_id, availability) VALUES (?, ?, 'available')";
         try (Connection connection = getConnection()) {
             try (PreparedStatement insertStmt = connection.prepareStatement(insertOffInsSql)) {
                 insertStmt.setInt(1, instructor.getId());

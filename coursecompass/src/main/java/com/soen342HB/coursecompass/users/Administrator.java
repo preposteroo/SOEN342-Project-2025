@@ -159,16 +159,16 @@ public class Administrator extends PrivateUser {
         System.out.print("Enter the end time (24-hr HH:MM): ");
         String endTime = InputManager.getInput();
 
+        Offering offering = new Offering(courseType, courseName); // and this
+        OfferingDAO offeringDAO = new OfferingDAO();
+        offeringDAO.addtoDb(offering);
+
         Schedule schedule = new Schedule(startDate, endDate, EDayOfWeek.from(dayOfWeek), startTime,
                 endTime, space);
+        schedule.setOfferingId(offering.getId());
         ScheduleDAO scheduleDAO = new ScheduleDAO();
         scheduleDAO.addtoDb(schedule);
         scheduleDAO.scheduleToSpace(space, schedule);
-
-        Offering offering = new Offering(courseType, courseName); // and this
-        offering.setSchedule(schedule); // changed this
-        OfferingDAO offeringDAO = new OfferingDAO();
-        offeringDAO.addtoDb(offering);
         // break;
         // default:
         // System.out.println("Invalid use of the command offerings.");

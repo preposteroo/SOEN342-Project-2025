@@ -22,7 +22,7 @@ public class ScheduleDAO extends BaseDAO<Schedule> {
     @Override
     public void addtoDb(Schedule schedule) {
         String insertScheduleSql =
-                "INSERT INTO schedules (start_date, end_date, day_of_week, start_time, end_time) VALUES (?, ?, ?, ?, ?)";
+                "INSERT INTO schedules (start_date, end_date, day_of_week, start_time, end_time, offering_id) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection connection = getConnection()) {
             try (PreparedStatement insertStmt = connection.prepareStatement(insertScheduleSql,
@@ -32,6 +32,7 @@ public class ScheduleDAO extends BaseDAO<Schedule> {
                 insertStmt.setString(3, schedule.getDayOfWeek().name());
                 insertStmt.setTime(4, java.sql.Time.valueOf(schedule.getStartTime() + ":00"));
                 insertStmt.setTime(5, java.sql.Time.valueOf(schedule.getEndTime() + ":00"));
+                insertStmt.setInt(6, schedule.getOfferingId());
 
                 int rowsAffected = insertStmt.executeUpdate();
                 if (rowsAffected > 0) {

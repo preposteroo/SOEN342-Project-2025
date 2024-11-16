@@ -10,6 +10,7 @@ public class Schedule {
     private String startTime;
     private String endTime;
     private Space space;
+    private int offeringId;
 
     public Schedule(String startDate, String endDate, EDayOfWeek dayOfWeek, String startTime,
             String endTime, Space space) {
@@ -103,5 +104,13 @@ public class Schedule {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int getOfferingId() {
+        return offeringId;
+    }
+
+    public void setOfferingId(int offeringId) {
+        this.offeringId = offeringId;
     }
 }
