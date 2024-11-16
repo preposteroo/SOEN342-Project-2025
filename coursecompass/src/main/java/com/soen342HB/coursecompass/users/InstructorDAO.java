@@ -181,6 +181,32 @@ public class InstructorDAO extends BaseDAO<Instructor> {
         }
     }
 
+    public List<Instructor> fetchAllFromDb() {
+        List<Instructor> instructors = new ArrayList<>();
+        String sql = "SELECT i.id AS instructor_id, u.username, u.password, i.specialization "
+                + "FROM users u " + "JOIN instructors i ON u.id = i.user_id "
+                + "WHERE u.user_type = 'INSTRUCTOR'";
+
+        try (Connection connection = getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql);
+                ResultSet resultSet = statement.executeQuery()) {
+            while (resultSet.next()) {
+                int instructorId = resultSet.getInt("instructor_id");
+                String username = resultSet.getString("username");
+                String password = resultSet.getString("password");
+                String specialization = resultSet.getString("specialization");
+
+                String[] availableLocations = getInstructorCities(instructorId, connection);
+
+                instructors.add(new Instructor(instructorId, username, password, specialization,
+                        availableLocations));
+            }
+        } catch (SQLException e) {
+            System.out.println("SQL error occurred: " + e.getMessage());
+        }
+        return instructors;
+    }
+
     private String[] getInstructorCities(int instructorId, Connection connection)
             throws SQLException {
         List<String> cities = new ArrayList<>();

@@ -131,6 +131,10 @@ public class Student extends PrivateUser {
         StudentDAO studentDAO = new StudentDAO();
         Student student = studentDAO.fetchFromDb(this.username);
         Lesson lesson = lessonDAO.fetchFromDb(args[1]);
+        if (lesson == null) {
+            System.out.println("Lesson not found.");
+            return;
+        }
         if (lesson.getAvailable().equals("available")) {
             System.out.println("Lesson booked: " + lesson.getId());
             System.out.println("Is this booking for a dependent? yes or no");

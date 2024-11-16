@@ -152,10 +152,19 @@ public class LocationDAO extends BaseDAO<Location> {
     }
 
 
-    public Location[] fetchAllFromDb() {
-        Location[] locations = new Location[db.size()];
-        for (int i = 0; i < db.size(); i++) {
-            locations[i] = db.get(i);
+    public List<Location> fetchAllFromDb() {
+        String sql = "SELECT id, location_name FROM location";
+        List<Location> locations = new ArrayList<Location>();
+        try (Connection connection = getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql);
+                ResultSet resultSet = statement.executeQuery()) {
+            while (resultSet.next()) {
+                int id = resultSet.getInt("id");
+                String locationName = resultSet.getString("location_name");
+                locations.add(new Location(id, locationName));
+            }
+        } catch (SQLException e) {
+            System.out.println("SQL error occurred: " + e.getMessage());
         }
         return locations;
     }

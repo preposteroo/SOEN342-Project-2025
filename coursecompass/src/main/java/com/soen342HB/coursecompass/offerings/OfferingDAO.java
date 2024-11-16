@@ -25,7 +25,7 @@ public class OfferingDAO extends BaseDAO<Offering> {
             return;
         }
         String insertOfferingSql =
-                "INSERT INTO offerings (course_name, offering_mode) VALUES (?, ?)";
+                "INSERT INTO offerings (course_name, offering_mode, offering_id) VALUES (?, ?, ?)";
 
         try (Connection connection = getConnection()) {
             try (PreparedStatement insertStmt = connection.prepareStatement(insertOfferingSql,
@@ -34,7 +34,7 @@ public class OfferingDAO extends BaseDAO<Offering> {
                 insertStmt.setString(1, offering.getCourseName());
                 insertStmt.setString(2, offering.getType().name()); // Ensure you're setting the
                                                                     // second parameter correctly
-
+                insertStmt.setInt(3, offering.getId());
                 // Execute the update
                 int rowsAffected = insertStmt.executeUpdate();
                 if (rowsAffected > 0) {
@@ -57,24 +57,6 @@ public class OfferingDAO extends BaseDAO<Offering> {
         }
 
         endWrite();
-    }
-
-
-    public void offeringToSchedule(Offering offering, Schedule schedule) {
-        String insertOffScheSql =
-                "INSERT INTO schedule_offering (schedule_id, offering_id) VALUES (?, ?)";
-        try (Connection connection = getConnection()) {
-            try (PreparedStatement insertStmt = connection.prepareStatement(insertOffScheSql)) {
-                insertStmt.setInt(1, schedule.getId());
-                insertStmt.setInt(2, offering.getId());
-                insertStmt.executeUpdate();
-                System.out.println("Schedule-Offering association added successfully.");
-            } catch (SQLException e) {
-                System.out.println("SQL error occurred: " + e.getMessage());
-            }
-        } catch (SQLException e) {
-            System.out.println("Connection error occurred: " + e.getMessage());
-        }
     }
 
     public void offeringToInstructor(Offering offering, Instructor instructor) {
@@ -135,7 +117,7 @@ public class OfferingDAO extends BaseDAO<Offering> {
 
     public int getOfferingIdByScheduleId(int scheduleId) {
         int offeringId = -1;
-        String query = "SELECT offering_id FROM schedule_offering WHERE schedule_id = ?";
+        String query = "SELECT offering_id FROM schedules WHERE id = ?";
 
         try (Connection connection = getConnection();
                 PreparedStatement statement = connection.prepareStatement(query)) {

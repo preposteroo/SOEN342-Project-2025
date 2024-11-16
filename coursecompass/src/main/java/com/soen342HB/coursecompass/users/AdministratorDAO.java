@@ -5,6 +5,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 // import com.soen342HB.coursecompass.core.IDAO;
 import com.soen342HB.coursecompass.core.BaseDAO;
 
@@ -62,6 +64,23 @@ public class AdministratorDAO extends BaseDAO<Administrator> {
             System.out.println("SQL error occurred: " + e.getMessage());
             return null;
         }
+    }
+
+    public List<Administrator> fetchAllFromDb() {
+        String sql = "SELECT * FROM users WHERE user_type = 'ADMIN'";
+        List<Administrator> administrators = new ArrayList<Administrator>();
+        try (Connection connection = getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql);
+                ResultSet resultSet = statement.executeQuery()) {
+            while (resultSet.next()) {
+                String username = resultSet.getString("username");
+                String password = resultSet.getString("password");
+                administrators.add(new Administrator(username, password));
+            }
+        } catch (SQLException e) {
+            System.out.println("SQL error occurred: " + e.getMessage());
+        }
+        return administrators;
     }
 
     @Override

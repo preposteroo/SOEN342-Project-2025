@@ -56,6 +56,10 @@ public class Instructor extends PrivateUser {
 		String cityName = InputManager.getInput();
 		City city;
 		city = cityDAO.fetchFromDbByName(cityName);
+		if (city == null) {
+			System.out.println("City not found.");
+			return;
+		}
 		System.out.println("Here are the locations for " + city.getCityName());
 		city.setLocations(cityDAO.getLocationsForCity(city));
 		for (Location location : city.getLocations()) {

@@ -147,10 +147,24 @@ public class SpaceDAO extends BaseDAO<Space> {
     }
 
 
-    public Space[] fetchAllFromDb() {
-        Space[] spaces = new Space[db.size()];
-        for (int i = 0; i < db.size(); i++) {
-            spaces[i] = db.get(i);
+    public List<Space> fetchAllFromDb() {
+        String selectAllSpacesSql = "SELECT id, space_name FROM spaces";
+        ArrayList<Space> spaces = new ArrayList<>();
+
+        try (Connection connection = getConnection()) {
+            try (PreparedStatement selectStmt = connection.prepareStatement(selectAllSpacesSql)) {
+                try (ResultSet rs = selectStmt.executeQuery()) {
+                    while (rs.next()) {
+                        spaces.add(new Space(rs.getInt("id"), rs.getString("space_name")));
+                    }
+                } catch (SQLException e) {
+                    System.out.println("ResultSet error occurred: " + e.getMessage());
+                }
+            } catch (SQLException e) {
+                System.out.println("SQL error occurred: " + e.getMessage());
+            }
+        } catch (SQLException e) {
+            System.out.println("Connection error occurred: " + e.getMessage());
         }
         return spaces;
     }
